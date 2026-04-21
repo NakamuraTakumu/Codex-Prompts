@@ -1,6 +1,6 @@
 ---
 name: document-workflow
-description: Use in any Git repository. Treat `document/` as managed by the standard document-workflow rotation model by default, and install the standard setup if the required files or settings are missing unless the repository already has a deliberate alternative or the user explicitly asks not to change it.
+description: Use in any Git repository. Treat `document/` as managed by the standard document-workflow rotation model by default, install the standard setup if the required files or settings are missing unless the repository already has a deliberate alternative or the user explicitly asks not to change it, and decide whether notes belong in repository-local documentation or the global `/home/nakamura/.codex/document/` store.
 ---
 
 # Document Workflow
@@ -25,10 +25,15 @@ Typical cases:
 
 ## Storage Policy
 
+- Choose storage class before location: decide `document/` vs `knowledge/` first, then decide repository-local vs global scope.
 - Use `document/` for notes and documents that depend on the current code state, current branch state, or specific commits.
 - Use `knowledge/` for notes and documents that should remain useful even as the code changes, such as reusable findings, stable references, and general lessons.
 - If a note is specific to one workspace or repository, store it in that workspace's local `document/` directory.
 - If a note is not tied to any specific workspace or repository, store it in `/home/nakamura/.codex/document/`.
+- If a note was discovered during repository work but its substance is about agent process, workflow mistakes, or reusable operating guidance rather than that repository's code/state, treat it as global and store it in `/home/nakamura/.codex/document/`.
+- If a note remains actionable after removing repository path, branch, commit, and current code details, treat it as global.
+- If one thread produces both repository-specific findings and global process findings, split them into separate notes and store each in the appropriate location instead of forcing one location for both.
+- Split mixed findings only when both parts have standalone reuse value; otherwise keep the dominant note and add a one-line pointer to the other location.
 - Notes stored under `/home/nakamura/.codex/document/` should be written in Japanese unless there is a clear reason to use another language.
 - Record substantive research results, explicit documentation requests, and reusable or non-obvious findings unless the user explicitly asks not to.
 - Default to saving a short Markdown note when a task involves non-trivial investigation, comparison, decision-making, workflow design, or reusable troubleshooting.

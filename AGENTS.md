@@ -43,6 +43,7 @@
 
 ## Communication
 - Default to Japanese for chat replies unless the user requests otherwise.
+- Requests to translate, explain, or summarize existing text should be handled in the chat by default, without editing the source file, unless the user explicitly asks for a file change.
 - During longer tasks, provide periodic progress updates so the user can tell work is continuing.
 - When a task becomes unexpectedly difficult or time-consuming, explain the difficulty and ask the user for guidance instead of continuing silently.
 - Exercise independent judgment on user instructions, and make ambiguity, incorrect assumptions, and materially better alternatives explicit when relevant.
@@ -57,12 +58,15 @@
 ## Knowledge Capture
 - When a task produces research results, reusable knowledge, or non-obvious decisions worth preserving, create or update documentation by using the `document-workflow` skill.
 - When a task needs documents, notes, research capture, or repository document management, use the `document-workflow` skill.
+- When exploring repository documents, notes, or where relevant documentation should live, consider the `document-workflow` skill.
 - In a Git repository, use the `document-workflow` skill when document rotation or its setup may need to be introduced or updated.
+- When findings are worth preserving in repository documentation, do not wait for an explicit follow-up asking to save them; create or update the note before treating the task as complete.
 
 ## Tooling
 - When a task becomes repetitive, improve efficiency by documenting the procedure as a manual or by turning it into a script when appropriate.
 - When stable repetitive work becomes visible, consider consolidating the procedure into a script or tool.
 - Place newly created scripts in a `tool/` directory.
+- If a tool or script is intended to be used only by a specific skill, place it inside that skill's directory instead of a shared `tool/` directory.
 - For each newly created script, include usage information in the file itself so the execution method, main arguments, and inputs/outputs are clear.
 
 ## Coding Style

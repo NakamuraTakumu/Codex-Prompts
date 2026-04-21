@@ -1,5 +1,6 @@
 .personality_migration
 .tmp/
+document/
 AGENTS.md.bak-20260412-1304
 archived_sessions/
 auth.json
