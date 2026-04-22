@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Review"
+  short_description: "Review papers or revise while reviewing"
+  default_prompt: "Use $paper-review to review this manuscript, or revise it while reviewing, depending on my request."

@@ -1,3 +1,5 @@
+skills/.system
+skills/empirical-prompt-tuning
 config.toml
 .personality_migration
 .tmp/

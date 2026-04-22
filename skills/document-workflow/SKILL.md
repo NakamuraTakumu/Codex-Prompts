@@ -44,9 +44,9 @@ Typical cases:
 
 ## Markdown Metadata
 
-When creating or updating Markdown notes, include a short metadata block near the top.
+When creating or updating Markdown notes, use the standard structure below near the top of the file unless the user explicitly requests a different format.
 
-Recommended fields:
+Use this exact metadata block order:
 - `Created:` creation timestamp
 - `Updated:` last updated timestamp
 - `Model:` model used to produce or revise the note
@@ -54,13 +54,27 @@ Recommended fields:
 - `Session:` session ID when available
 - `Repository:` repository name or path when relevant
 - `Related-Commit:` commit hash when the note depends on a specific code state
-- `Status:` `draft`, `active`, or `archived`
 
-In addition to metadata, include a short context section near the top of each document, report, or note that explains why the document exists.
+After the metadata block, include:
+- a required one-line `Purpose:` line
+- a required `## Background` section
+- a required `## Content` section
+- a required `## References` section at the end
 
-Do not mechanically split that context into separate one-line bullets for background, motivation, and user request unless that structure is actually helpful. Prefer a compact paragraph or a very short bullet list.
+`Purpose:` must state why the document is worth keeping or writing in one sentence.
+`Purpose:` is not a restatement of the topic or a duplicate of `Background`. Use it for the retention reason, such as what future decision, review, handoff, or reproduction this note should support.
 
-Keep that section concise. Preserve the core facts, decisions, constraints, rationale, and reproduction details. Omit secondary details that can be inferred from those core points unless they are needed for verification, reproduction, or future decisions. The goal is to preserve why the document exists, not to repeat the whole task log.
+`## Background` must appear with that exact heading name and should briefly explain the situation, trigger, or factual setup behind the note so later readers can interpret the saved result correctly.
+
+Keep `## Background` concise. Preserve the core facts, decisions, constraints, rationale, and reproduction details.
+
+`## Content` must appear after `## Background` with that exact heading name and should contain the document's main substance, such as findings, procedures, decisions, comparisons, or other task-specific material.
+
+`## References` must appear at the end of the document with that exact heading name.
+For now, list only external references there, such as web pages, papers, standards, or other outside documents.
+Do not list internal repository documents, local notes, or other workspace-internal files in `## References` unless the user later asks to change this rule.
+
+Keep the document concise as a whole. Omit secondary details that can be inferred from the core points unless they are needed for verification, reproduction, or future decisions. Do not repeat the whole task log, do not restate conclusions that are obvious from the main proposal or decision, and do not include nearby but separate artifacts such as implementation patches, recommended wording, or review notes unless the document's purpose specifically requires them.
 
 When available, prefer actual runtime values over placeholders:
 - read `Model:` and `Reasoning-Effort:` from the current thread's `turn_context` entry in the session log under `/home/nakamura/.codex/sessions/`
@@ -76,7 +90,7 @@ Example:
 /home/nakamura/.codex/skills/document-workflow/scripts/extract_session_metadata.sh
 ```
 
-Minimal example:
+Standard template:
 
 ```md
 # Title
@@ -88,11 +102,21 @@ Minimal example:
 - Session: <session-id-if-available>
 - Repository: <repo-name-or-path>
 - Related-Commit: <commit-if-relevant>
-- Status: active
+
+Purpose: <one-line statement of why this document should be kept or what future work it should support>
 
 ## Background
 
-This note records <the key situation or decision>. It was created because <why it matters now> and should preserve <what future work or review will need to know>.
+This note records <the key situation or decision>. It explains the immediate setup, trigger, or constraint behind the note so later readers can interpret the saved result correctly.
+
+## Content
+
+<write the main contents of the document here>
+
+## References
+
+- <external source 1>
+- <external source 2>
 ```
 
 ## Repository Document Rotation

@@ -1,13 +1,13 @@
 ---
-name: latexdiff-review
-description: Use when the user wants a readable LaTeX manuscript diff against Git revisions or the current working tree, especially for multi-file projects that need `latexdiff-vc --git --flatten`, diff PDF compilation, direct artifact inspection, and concise reporting of caveats.
+name: latexdiff
+description: Use when the user wants to generate a LaTeX manuscript diff against Git revisions or the current working tree, especially for multi-file projects that need `latexdiff-vc --git --flatten` and a concise record of artifact-generation caveats.
 ---
 
-# Latexdiff Review
+# Latexdiff
 
 ## Overview
 
-This skill creates a reviewable `latexdiff` artifact for a LaTeX project and records the practical caveats around generating that artifact.
+This skill creates a `latexdiff` artifact for a LaTeX project and records the practical caveats around generating that artifact.
 
 Use it for Git-backed LaTeX projects with a master `.tex` file and included section files.
 
@@ -15,7 +15,7 @@ Use it for Git-backed LaTeX projects with a master `.tex` file and included sect
 
 - The user wants a visual diff PDF rather than a raw `git diff`.
 - The LaTeX project spans multiple included files and needs `--flatten`.
-- The user wants confirmation that the diff artifact is faithful and readable.
+- The user wants confirmation that the diff artifact generation is faithful and usable.
 - The user wants the workflow documented so it can be repeated later.
 
 ## Workflow
@@ -51,7 +51,7 @@ Replace `HEAD` and `learnerParaLens.tex` as needed.
 - `<diff-dir>/<master>.tex`
 - Optionally, a Markdown note describing the exact command sequence and any environment-specific caveats when the result should be preserved
 
-Follow the workspace or repository policy for where review artifacts and notes belong. If no policy is present, prefer a descriptive subdirectory under `document/` or another existing review-artifact area over ad hoc scratch locations.
+Follow the workspace or repository policy for where diff artifacts and notes belong. If no policy is present, prefer a descriptive subdirectory under `document/` or another existing artifact area over ad hoc scratch locations.
 
 ## Reporting Checklist
 
