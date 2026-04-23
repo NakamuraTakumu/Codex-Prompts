@@ -18,6 +18,10 @@
 - Keep this file concise and avoid task-specific one-off notes.
 - Keep `AGENTS.md` itself as small as reasonably possible.
 - When a relevant skill already exists for an instruction, use `AGENTS.md` only to say when that skill should be used, and keep the detailed procedure or policy in the skill instead.
+- When creating a new skill or updating an existing skill, use the `skill-creator` skill.
+- When creating or updating a skill, structure the skill in Markdown as much like a programming language as is reasonable, minimize free-form natural language, remove redundant parts, and generalize any rule that can be generalized.
+- When creating or updating a skill, keep the Markdown human-readable; prefer structured prose over overly symbolic notation, and shave repeated patterns and unnecessary verbosity without sacrificing readability.
+- When modifying or refactoring a skill, explicitly check that useful information present before the change has not been accidentally lost.
 
 ## Layering
 - Keep only global or directory-wide rules in this file.
@@ -35,6 +39,7 @@
 - When a response or change depends on a specific reference, make that basis clear.
 - When consulting a PDF, first download or place it in a `tmp_pdf/` directory before reading it.
 - For prose or content review of a PDF, prefer extracting text from the PDF before converting pages to images; reserve image inspection for cases where layout, figures, or other visual details materially matter.
+- When evaluating PDF wording that may be affected by embedded commands, macros, annotations, or extraction artifacts, inspect the extracted PDF text directly before judging the phrasing.
 
 ## Reasoning
 - Prefer criteria and distinctions that reflect the underlying meaning or structure of the problem over surface-level proxies.
@@ -54,6 +59,7 @@
 
 ## Workspace Hygiene
 - Clean up intermediate outputs and temporary files produced during conversion or verification once they are no longer needed.
+- In repositories that use document rotation, treat rotated snapshot directories such as `document/previous/` and `document/<sha>-<slug>/` as read-only unless the user explicitly instructs otherwise.
 
 ## Knowledge Capture
 - When a task produces research results, reusable knowledge, or non-obvious decisions worth preserving, create or update documentation by using the `document-workflow` skill.
@@ -67,7 +73,12 @@
 - When stable repetitive work becomes visible, consider consolidating the procedure into a script or tool.
 - Place newly created scripts in a `tool/` directory.
 - If a tool or script is intended to be used only by a specific skill, place it inside that skill's directory instead of a shared `tool/` directory.
+- Prefer placing tools and scripts inside the relevant skill directory when their purpose, inputs, or maintenance scope are primarily tied to that skill. Use a shared `tool/` directory only when the tool is genuinely cross-skill or repository-wide.
 - For each newly created script, include usage information in the file itself so the execution method, main arguments, and inputs/outputs are clear.
+
+## Delegation
+- When using `spawn_agent`, default `fork_context` to `false`.
+- Only set `fork_context: true` when higher-priority instructions explicitly require the subagent to inherit the current thread context.
 
 ## Coding Style
 - Prefer concise names as long as the meaning remains clear in context.

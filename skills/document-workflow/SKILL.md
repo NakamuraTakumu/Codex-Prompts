@@ -137,6 +137,11 @@ Meaning:
 - `document/<shortsha>-<slug>/` contains a finalized snapshot associated with a past commit
 - `knowledge/` is outside the rotation workflow and is meant for code-independent notes
 
+Editing policy:
+- Treat `document/previous/` and `document/<shortsha>-<slug>/` as rotated snapshots.
+- Do not edit files inside rotated snapshot directories unless the user explicitly asks to modify those archived files.
+- When creating new artifacts or working documents without an explicit target path, place them in a fresh path under the active `document/` root rather than reusing a rotated snapshot directory.
+
 Scope:
 - `document/` is the rotation-managed area by default
 - if some documents should not be rotation-managed, keep them in `knowledge/` or use a deliberate alternative workflow

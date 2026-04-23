@@ -71,6 +71,7 @@ Treat these criteria as default review lenses, not as an exhaustive or closed li
 - Are headings, lists, figures, page breaks, and footnotes rendered cleanly?
 - Are equation numbers, figure numbers, references, and bibliography entries intact?
 - Does the PDF introduce ambiguity or awkwardness not obvious in source?
+- Does extracted PDF text reveal command leakage, annotation text, or wording artifacts that are easy to miss in source or page images?
 
 ## Severity
 

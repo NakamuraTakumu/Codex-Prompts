@@ -27,6 +27,8 @@ Use it for Git-backed LaTeX projects with a master `.tex` file and included sect
 2. Generate a flattened diff with `latexdiff-vc`.
    Run from the LaTeX project root.
    Choose the output directory according to the workspace policy.
+   When the repository uses document rotation, create a fresh artifact directory under the active `document/` root by default.
+   Do not write the diff artifact into `document/previous/` or any rotated snapshot directory unless the user explicitly asks for that target.
 
 ```bash
 latexdiff-vc --git --flatten --force -d diff -r HEAD learnerParaLens.tex
@@ -51,7 +53,7 @@ Replace `HEAD` and `learnerParaLens.tex` as needed.
 - `<diff-dir>/<master>.tex`
 - Optionally, a Markdown note describing the exact command sequence and any environment-specific caveats when the result should be preserved
 
-Follow the workspace or repository policy for where diff artifacts and notes belong. If no policy is present, prefer a descriptive subdirectory under `document/` or another existing artifact area over ad hoc scratch locations.
+Follow the workspace or repository policy for where diff artifacts and notes belong. If no policy is present, prefer a fresh descriptive subdirectory under `document/` or another active artifact area over ad hoc scratch locations. Do not reuse rotated snapshot directories by default.
 
 ## Reporting Checklist
 
