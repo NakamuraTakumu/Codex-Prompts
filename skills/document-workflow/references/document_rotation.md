@@ -77,7 +77,8 @@ set -a
 set +a
 
 ./tool/rotate_document_before_commit.sh
-git add -A -- "$ROTATE_DOCUMENT_DIR"
+git add -u -- "$ROTATE_DOCUMENT_DIR"
+git ls-files --others --exclude-standard -z -- "$ROTATE_DOCUMENT_DIR" | xargs -0 -r git add --
 ```
 
 ## Minimal Setup Shape

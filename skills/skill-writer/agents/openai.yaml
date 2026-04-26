@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Writer"
+  short_description: "Draft and refine SKILL.md wording"
+  default_prompt: "Help me draft or refine the wording for a Codex SKILL.md."
