@@ -1,4 +1,4 @@
 interface:
   display_name: "Skill Writer"
-  short_description: "Draft and refine SKILL.md wording"
-  default_prompt: "Help me draft or refine the wording for a Codex SKILL.md."
+  short_description: "Create, update, and review SKILL.md files"
+  default_prompt: "Use $skill-writer to create, update, or review a Codex SKILL.md."
