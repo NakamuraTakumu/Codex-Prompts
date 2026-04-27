@@ -5,22 +5,19 @@ description: skill の新規作成、既存 skill への内容追加、既存 sk
 
 # Skill Writer
 
-## 使用場面
+## 対象と成果物
 
 - **新規作成**:
   - **対象**: 新しい skill。
-  - **選択条件**: ユーザーの依頼が skill の新規作成である場合。
-  - **目的**: 目的、適用対象、入力、手順、出力、検証条件を持つ skill を作る。
+  - **成果物**: 目的、適用対象、入力、手順、出力、検証条件を持つ skill。
 - **内容追加**:
   - **対象**: 既存 skill。
-  - **選択条件**: ユーザーの依頼が既存 skill への内容追加である場合。
-  - **目的**: 既存 skill の構造を崩さず、新しい内容を適切な位置に追加する。
+  - **成果物**: 既存構造に沿って追加内容を反映した skill。
 - **既存 skill レビュー**:
   - **対象**: 既存 skill。
-  - **選択条件**: ユーザーの依頼が既存 skill のレビューである場合。
-  - **目的**: 既存 skill の冗長性、構造の混線、命名の曖昧さ、task-specific な混入、情報落ちを確認する。
+  - **成果物**: 冗長性、構造の混線、命名の曖昧さ、task-specific な混入、情報落ちの findings。
 
-## Core Principles
+## 中核原則
 
 - **冗長性の排除**: 推測可能な説明や重複指示を避ける。
 - **構造化**: 責務、判断、出力契約を Markdown 構造で分ける。
@@ -29,15 +26,15 @@ description: skill の新規作成、既存 skill への内容追加、既存 sk
 
 ## 参照
 
-- 新規作成、内容追加、既存 skill レビューでは `skill-creator` を参照する。
-- 冗長性、構造、命名、情報保持の判断が必要な場合、特に大きな編集、構造変更、抽象化、レビューでは `references/writing_rules.md` を読む。
+- **`skill-creator`**: 新規作成、内容追加、既存 skill レビューで参照する。skill folder、`SKILL.md`、`references/`、`agents/openai.yaml` の役割分担もここに従う。
+- **`references/writing_rules.md`**: 冗長性、構造、命名、情報保持の詳細判断に使う。特に大きな編集、構造変更、抽象化、レビューでは読む。
 
-## Workflow
+## ワークフロー
 
 ### 新規作成
 
 1. **要件確認** で目的、使用場面、対象読者または実行者、入力、出力、禁止事項を固定する。
-2. **Core Principles** と `skill-creator` に照らして、ユーザーの指示を skill の入力、手順、出力へ整理する。
+2. **中核原則** と **参照** に照らして、ユーザーの指示を skill の入力、手順、出力へ整理する。
 3. ユーザーの明示的な承認または続行指示を得たら、`skill-creator` を使って skill template を適用し作成する。
 4. 確認済みの入力、手順、出力、禁止事項、検証条件が作成後の skill に残っているか確認する。
 5. 完成した skill を **レビュー手順** で確認する。
@@ -45,7 +42,7 @@ description: skill の新規作成、既存 skill への内容追加、既存 sk
 ### 内容追加
 
 1. 対象 skill と追加内容を受け取る。
-2. **Core Principles** と `references/writing_rules.md` に照らして、追加先の section、record、または手順を決める。
+2. **中核原則** と **参照** に照らして、追加先の **section**、**record**、または手順を決める。
 3. 既存 skill の構造と表記に合わせて追加内容を反映する。
 4. 変更した skill を **レビュー手順** で確認する。
 
@@ -54,6 +51,10 @@ description: skill の新規作成、既存 skill への内容追加、既存 sk
 1. 対象 skill を受け取る。
 2. 対象 skill を **レビュー手順** で確認する。
 
+## 禁止事項
+
+- ユーザーから与えられていない内容を勝手に書かない。冗長性の元。
+
 ## 汎用手順
 
 ### 要件確認
@@ -61,9 +62,13 @@ description: skill の新規作成、既存 skill への内容追加、既存 sk
 - **確認項目**:
   - **目的**: skill が解決する問題。
   - **使用場面**: skill を使うタイミング。
+  - **skill 名**: frontmatter `name` と呼び出し時の `$skill-name`。
+  - **trigger 文言**: frontmatter `description` に入れる使用条件。
+  - **作成先 path**: skill folder の保存先。
   - **対象読者または実行者**: skill を読む、または実行する主体。
   - **入力**: ユーザーから受け取る値、参照する file、前提。
   - **出力**: 返答形式、編集対象、保存先、検証条件。
+  - **bundled resources**: 必要な `scripts/`、`references/`、`assets/`。
   - **禁止事項**: skill が行ってはいけないこと。
 - **確認方法**:
   - 既存情報から合理的に決められる場合は、仮案を作ってユーザーに確認する。
@@ -71,12 +76,14 @@ description: skill の新規作成、既存 skill への内容追加、既存 sk
 
 ### レビュー手順
 
-- **Core Principles**、`skill-creator`、`references/writing_rules.md` に照らして確認する。
-- 新規作成または更新後は、`skill-creator` の validation を実行または確認する。
-- 削除や抽象化を行った場合は、情報落ちがないか確認する。
+- **中核原則** と **参照** に照らして確認する。
+- 新規作成または更新後は、可能な限り `skill-creator` の `scripts/quick_validate.py <path/to/skill-folder>` を実行し、未実行の場合は理由を報告する。
 - 既存 skill を編集した場合は、`git diff` などで差分を確認する。
+- **レビュー検査** は `references/writing_rules.md` の **レビュー検査** に従う。
 - レビュー結果を保存する場合は `document-workflow` skill に基づく。
-- **出力**:
-  - findings は **冗長性の排除**、**構造化**、**厳密化**、**情報保持** の観点別に分類する。
-  - 各 finding には、対象 file path、行番号、該当する原則、問題、最小修正案を含める。
-  - 出力契約、workflow、tool 使用などの問題は、上記観点に直接対応しない場合だけ **補助的指摘** に置く。
+
+## 出力契約
+
+- **findings**: 対象 file path、行番号、該当する原則、問題、最小修正案を含める。
+- **編集報告**: 変更 file、変更要約、未対応事項を含める。
+- **validation 報告**: 実行した command、結果、未実行の場合の理由を含める。
