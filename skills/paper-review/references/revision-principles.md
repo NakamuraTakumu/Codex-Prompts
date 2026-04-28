@@ -1,42 +1,42 @@
 # Paper Revision Principles
 
-Use these principles as default constraints for manuscript revision.
+manuscript revision の default constraints として、これらの principles を使う。
 
-## Core Policy
+## 中核方針
 
-- Preserve meaning by default.
-- Prefer the smallest safe local revision over broader rewriting.
-- Keep revisions consistent with the manuscript's existing style, terminology, and notation.
+- default では meaning を preserve する。
+- broader rewriting よりも smallest safe local revision を優先する。
+- revisions は manuscript の existing style、terminology、notation と consistent に保つ。
 
-## Scope Control
+## Scope 制御
 
-- Do not widen the edit beyond the requested scope unless that is necessary to complete a safe local fix.
-- If a problem is too large for a safe local fix, do not rewrite broadly on your own; explain the issue and leave it as a finding unless the user expands the scope.
+- safe local fix を完了するために必要でない限り、requested scope を超えて edit を広げない。
+- problem が safe local fix には大きすぎる場合、自分だけで broad に rewrite しない。ユーザーが scope を広げない限り、issue を説明し finding として残す。
 
-## Meaning Preservation
+## 意味保持
 
-- Do not change claims, implications, logical relations, attribution, certainty, or limiting conditions unless instructed.
-- When several revisions are possible, choose the one with the smallest semantic drift rather than the most polished phrasing.
-- Do not add new claims, support, comparisons, examples, caveats, warnings, or interpretations unless requested.
+- 指示がない限り、claims、implications、logical relations、attribution、certainty、limiting conditions を変えない。
+- 複数の revisions が可能な場合、最も polished phrasing ではなく semantic drift が最小のものを選ぶ。
+- 求められていない限り、新しい claims、support、comparisons、examples、caveats、warnings、interpretations を追加しない。
 
-## Manuscript Consistency
+## Manuscript の一貫性
 
-- Match the manuscript's existing vocabulary, style, English level, notation, and authorial voice.
-- Keep terminology, symbols, definitions, abbreviations, reference expressions, and citation handling consistent with the rest of the paper.
-- Treat repeated local patterns in nearby text as style evidence even when the rule is not explicitly documented.
-- When revising a word or expression, check that the change still works in nearby context and does not break parallel usage elsewhere in the manuscript.
+- manuscript の existing vocabulary、style、English level、notation、authorial voice に合わせる。
+- terminology、symbols、definitions、abbreviations、reference expressions、citation handling を paper の他部分と consistent に保つ。
+- rule が明示的に documented されていない場合でも、nearby text の repeated local patterns を style evidence として扱う。
+- word または expression を revise するときは、change が nearby context で引き続き機能し、manuscript 内の他所の parallel usage を壊さないことを確認する。
 
-## Citation and Sentence-Level Revision
+## Citation と sentence-level revision
 
-- Treat citation revision and other macro-affected wording as sentence-level and rhetoric-level revision, not as a macro substitution exercise.
-- When phrasing depends on how a citation or other macro integrates into prose, revise the sentence as a whole rather than only swapping commands.
+- citation revision とその他の macro-affected wording は、macro substitution exercise ではなく sentence-level と rhetoric-level の revision として扱う。
+- phrasing が citation または他の macro の prose への integration に依存する場合、commands を差し替えるだけでなく sentence 全体を revise する。
 
-## Rendered Output
+## Rendered Output の確認
 
-- Do not rely only on source when rendering matters.
-- Even for small source edits, avoid making the rendered PDF worse around references, figure connections, line breaks, lists, or equations.
+- rendering が重要な場合、source だけに依存しない。
+- small source edits であっても、references、figure connections、line breaks、lists、equations の周辺で rendered PDF を悪化させない。
 
-## Intended Scope
+## 想定 scope
 
-- Apply these principles to English phrasing fixes, citation integration, wording adjustments after style-file changes, local logical cleanup, and LaTeX readability improvements.
-- Do not rely on these principles alone for major restructuring or revisions that intentionally change the paper's claims.
+- これらの principles は、English phrasing fixes、citation integration、style-file changes 後の wording adjustments、local logical cleanup、LaTeX readability improvements に適用する。
+- major restructuring や paper's claims を意図的に変える revisions では、これらの principles だけに依存しない。

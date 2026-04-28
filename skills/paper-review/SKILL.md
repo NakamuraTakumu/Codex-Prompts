@@ -1,152 +1,152 @@
 ---
 name: paper-review
-description: Review academic papers and LaTeX manuscripts, with or without local revision, under explicit scholarly constraints. Use when Codex needs either (1) review findings only with no revision proposals, (2) review plus safe revision proposals without editing files, or (3) review plus safe local edits that fix issues without silently changing claims, scope, logic, terminology, or authorial voice.
+description: explicit scholarly constraints の下で、academic papers と LaTeX manuscripts を local revision ありまたはなしで review する。Codex が (1) revision proposals なしで findings のみを出す、(2) files を編集せず review と safe revision proposals を行う、または (3) claims、scope、logic、terminology、authorial voice を silently change せずに issue を直す safe local edits を行う必要があるときに使う。
 ---
 
 # Paper Review
 
-Use this skill when paper review must follow explicit scholarly constraints, whether the task stops at findings or continues into local revision work.
+paper review が explicit scholarly constraints に従う必要がある場合に、この skill を使う。task が findings で止まる場合にも、local revision work まで進む場合にも使う。
 
 ## Modes
 
 - `review-only`
-  - Report findings only.
-  - Do not propose revisions.
-  - Do not edit manuscript files.
-  - The review surface may be a `git diff` rather than the full manuscript text.
+  - findings のみを報告する。
+  - revisions を提案しない。
+  - manuscript files を編集しない。
+  - review surface は full manuscript text ではなく `git diff` でもよい。
 - `revision-no-change`
-  - Report findings.
-  - Propose safe revisions.
-  - Do not edit manuscript files.
+  - findings を報告する。
+  - safe revisions を提案する。
+  - manuscript files を編集しない。
 - `revision`
-  - Report findings.
-  - Apply safe local revisions to manuscript files.
+  - findings を報告する。
+  - manuscript files に safe local revisions を適用する。
 
-## Mode Inference
+## Mode 推定
 
-- Requests to inspect, check, review, assess, or summarize issues default to `review-only`.
-- Requests to suggest, propose, recommend, or outline revisions default to `revision-no-change`.
-- Requests to fix, revise, polish, clean up, or adjust text default to `revision`.
+- inspect、check、review、assess、issues の summarize を求める request は、default で `review-only`。
+- revisions の suggest、propose、recommend、outline を求める request は、default で `revision-no-change`。
+- text の fix、revise、polish、clean up、adjust を求める request は、default で `revision`。
 
-## Workflow
+## ワークフロー
 
-1. Fix the scope.
-   - Decide whether the target is the whole manuscript, a section, a diff, or a narrow issue such as citations or front matter.
-   - Do not read files outside the review target unless the user explicitly asks for broader coverage or a concrete blocker makes extra local context strictly necessary.
-2. Enumerate the in-scope review units.
-   - If the task is narrow, list the relevant objects first, such as all citations in a section.
-   - If the input is a `git diff`, define in-scope items as reviewable change units rather than raw diff lines or whole hunks.
-   - Group repeated local issue patterns when that reduces redundancy.
-3. Remove review blockers.
-   - Check for fatal build failures, unresolved references, unresolved citations, or missing bibliography output that would make later judgment unreliable.
-4. Select criteria and evidence.
-   - Load only the relevant parts of [references/criteria.md](references/criteria.md).
-   - Load [references/revision-principles.md](references/revision-principles.md) when revision is in scope, and also when `review-only` is used to judge manuscript changes in a `git diff`.
-   - Choose only the evidence needed for this request: source, PDF, build log, diff, author guidelines, or other directly relevant artifacts.
-   - Prefer a target-bound evidence set: reviewed file(s), corresponding rendered artifact(s), and corresponding build log(s).
-5. Review all in-scope items.
-   - Do not suppress important issues just because they do not fit neatly into the selected criteria.
-   - If the review surface is a `git diff`, split genuinely different issue types into separate findings, but allow one finding to cover repeated sites when the rationale, severity, and revision judgment are the same.
-6. Judge and handle revisions according to mode.
-   - `review-only`: stop at problem identification.
-   - `revision-no-change`: record safe revisions, but do not edit files.
-   - `revision`: apply the smallest sufficient safe local revision.
-   - Preserve meaning unless the user asked for substantive change.
-   - Treat citation fixes and other macro-affected wording as prose revision, not as macro substitution only.
-   - If a sound fix is no longer local, keep it as a finding instead of silently widening the revision.
-7. Re-check and report.
-   - Re-check any proposed or applied revision against the original intent and nearby context.
-   - Save or update a Markdown review note before treating the task as complete.
-   - Use `document-workflow` to choose the storage location and keep the note aligned with the final findings and revision status.
-   - Report findings with explicit severity labels, including unresolved issues that were too risky or too broad to revise safely.
+1. scope を固定する。
+   - target が whole manuscript、section、diff、または citations や front matter などの narrow issue のどれかを決める。
+   - ユーザーが broader coverage を明示的に求めた場合、または concrete blocker により extra local context が厳密に必要な場合を除き、review target 外の files を読まない。
+2. in-scope review units を列挙する。
+   - task が narrow な場合、section 内のすべての citations など、relevant objects を先に list する。
+   - input が `git diff` の場合、in-scope items は raw diff lines や whole hunks ではなく reviewable change units として定義する。
+   - repeated local issue patterns は、redundancy を減らせる場合に group する。
+3. review blockers を取り除く。
+   - 後続判断を unreliable にする fatal build failures、unresolved references、unresolved citations、missing bibliography output を確認する。
+4. criteria と evidence を選ぶ。
+   - [references/criteria.md](references/criteria.md) の relevant parts だけを load する。
+   - revision が in scope の場合、および `review-only` で `git diff` 内の manuscript changes が safe、local、meaning-preserving か判断する場合は、[references/revision-principles.md](references/revision-principles.md) を load する。
+   - この request に必要な evidence だけを選ぶ: source、PDF、build log、diff、author guidelines、またはその他の直接 relevant artifacts。
+   - target-bound evidence set を優先する: reviewed file(s)、corresponding rendered artifact(s)、corresponding build log(s)。
+5. すべての in-scope items を review する。
+   - important issues が selected criteria にきれいに収まらないという理由だけで suppress しない。
+   - review surface が `git diff` の場合、genuinely different issue types は separate findings に分ける。ただし rationale、severity、revision judgment が同じ repeated sites は 1 つの finding で cover してよい。
+6. mode に従って revisions を判断し扱う。
+   - `review-only`: problem identification で止める。
+   - `revision-no-change`: safe revisions を record するが、files は編集しない。
+   - `revision`: smallest sufficient safe local revision を適用する。
+   - ユーザーが substantive change を求めていない限り、meaning を preserve する。
+   - citation fixes とその他の macro-affected wording は、macro substitution だけでなく prose revision として扱う。
+   - sound fix が local でなくなった場合、revision を silently widen せず finding として残す。
+7. 再確認して報告する。
+   - proposed または applied revision を original intent と nearby context に照らして再確認する。
+   - task 完了扱いにする前に、Markdown review note を save または update する。
+   - `document-workflow` を使って storage location を選び、note を final findings と revision status に align させる。
+   - safe に revise するには risky または broad すぎた unresolved issues も含め、explicit severity labels 付きで findings を報告する。
 
-## Guardrails For Revision
+## Revision の guardrails
 
-- Do not broaden edits to unrelated issues just because they are nearby.
-- Do not add new claims, evidence, examples, comparisons, caveats, or interpretations unless requested.
-- Do not replace the manuscript's style with more sophisticated but less faithful prose.
-- Do not break established terminology, notation, definitions, abbreviations, references, or citation conventions.
-- If a requested fix conflicts with meaning preservation or local-only editing, say so explicitly.
+- 近くにあるという理由だけで、unrelated issues へ edits を広げない。
+- 求められていない限り、新しい claims、evidence、examples、comparisons、caveats、interpretations を追加しない。
+- manuscript の style を、より洗練されているが less faithful な prose で置き換えない。
+- established terminology、notation、definitions、abbreviations、references、citation conventions を壊さない。
+- requested fix が meaning preservation または local-only editing と衝突する場合は、その旨を明示する。
 
-## Verification
+## 検証
 
-- Use PDF when layout, cross-references, figures, captions, front matter, or citation integration may differ after rendering.
-- Use build logs for compile failures, unresolved references, unresolved citations, and bibliography generation issues.
-- Re-read any proposed or revised passage against the original text and nearby context when revision is in scope.
-- For LaTeX manuscripts, prefer both source and PDF verification when citation wording or presentation is involved.
-- When wording may be affected by LaTeX commands, macros, annotations, or PDF extraction artifacts, inspect the extracted PDF text directly before judging the phrasing.
-- Unless the user explicitly asks for a broader review, keep verification tied to the review target and its directly corresponding artifacts; do not read unrelated files just to gather extra context.
+- layout、cross-references、figures、captions、front matter、citation integration が rendering 後に変わりうる場合は PDF を使う。
+- compile failures、unresolved references、unresolved citations、bibliography generation issues には build logs を使う。
+- revision が in scope の場合、proposed または revised passage を original text と nearby context に照らして読み直す。
+- LaTeX manuscripts では、citation wording または presentation が関わる場合、source と PDF の両方で verification することを優先する。
+- wording が LaTeX commands、macros、annotations、PDF extraction artifacts の影響を受けうる場合、phrasing を判断する前に extracted PDF text を直接 inspect する。
+- ユーザーが broader review を明示的に求めない限り、verification は review target とその directly corresponding artifacts に結びつける。extra context を集めるためだけに unrelated files を読まない。
 
-## Reporting
+## 報告
 
-- Lead with findings and keep summary secondary.
-- Distinguish between review findings, safe revisions that were identified, and revisions that were actually applied.
-- Order findings by source order when the task is about a manuscript, section, or diff, unless the user explicitly asks for severity-first reporting.
-- When the review surface is a `git diff`, do not map findings mechanically to diff lines or whole hunks; report findings at the level of separable semantic changes.
-- Prefer grouping repeated issue patterns over repeating near-duplicate findings.
-- Order unresolved issues by severity.
-- Cite concrete file or artifact locations when possible.
+- findings を先に出し、summary は secondary にする。
+- review findings、identified safe revisions、actually applied revisions を区別する。
+- task が manuscript、section、diff に関する場合、ユーザーが severity-first reporting を明示的に求めない限り、findings は source order で並べる。
+- review surface が `git diff` の場合、findings を diff lines や whole hunks に機械的に map しない。separable semantic changes の level で report する。
+- near-duplicate findings を繰り返すより、repeated issue patterns を group することを優先する。
+- unresolved issues は severity 順に並べる。
+- 可能な場合、concrete file または artifact locations を cite する。
 
-## Output Markdown Format
+## Output Markdown 形式
 
-- Save or update a Markdown note for every `paper-review` task before treating the task as complete, unless a higher-priority instruction explicitly says not to.
-- Use `document-workflow` to choose the storage location and the standard outer document structure.
-- Keep the title, metadata block, `Purpose:`, `## Background`, `## Content`, and trailing `## References` aligned with `document-workflow`.
-- `paper-review` only standardizes what goes inside `## Content`.
+- higher-priority instruction が明示的に禁止しない限り、すべての `paper-review` task について task 完了扱いの前に Markdown note を save または update する。
+- storage location と standard outer document structure の選択には `document-workflow` を使う。
+- title、metadata block、`Purpose:`、`## Background`、`## Content`、末尾の `## References` は `document-workflow` に align させる。
+- `paper-review` は `## Content` 内部だけを standardize する。
 
 ```md
 ## Content
 
 ### Summary
 
-<brief review summary>
+<短い review summary>
 
 ### Findings
 
-1. <short finding title>
+1. <短い finding title>
    - Issue Location: <section / paragraph / sentence / file / page>
    - Severity: <major | moderate | minor | nit>
-   - Issue Reason: <why this should be revised>
+   - Issue Reason: <なぜ revised すべきか>
    - Revision:
-     - Content: <rough description of the intended change, or `none` if no change is being proposed>
-     - Nuance Shift: <how the wording or meaning would shift, or `none` if intended to preserve meaning>
+     - Content: <intended change の rough description。change を提案しない場合は `none`>
+     - Nuance Shift: <wording または meaning がどう shift するか。meaning preservation が目的なら `none`>
 
 ### Revision Status
 
 - Mode: <review-only | revision-no-change | revision>
-- Safe Revisions Identified: <list or none>
-- Revisions Applied: <list or none>
-- Unresolved Issues: <brief note or none>
+- Safe Revisions Identified: <list または none>
+- Revisions Applied: <list または none>
+- Unresolved Issues: <短い note または none>
 
 ### Verification
 
-- Source: <what was checked>
-- PDF: <what was checked or not checked>
-- Build Log: <what was checked or not checked>
+- Source: <checked した内容>
+- PDF: <checked した内容、または checked していない内容>
+- Build Log: <checked した内容、または checked していない内容>
 - Other Evidence: <diff / guideline / style file / none>
 ```
 
-- Repeat the `Findings` item schema as needed.
-- Use `Issue Location` and `Issue Reason` so the same schema works for pure review, proposal-only revision work, and applied revision work.
-- Keep `Revision` as a nested block with `Content` and `Nuance Shift`.
-- If the input is a `git diff`, one hunk may produce multiple findings, and one finding may cover multiple changed sites when they belong to the same issue pattern.
-- `Issue Location` may name multiple local sites when one finding intentionally groups repeated instances of the same issue.
-- Split a grouped finding only when the grouped sites require different reasoning, severity, or revision judgment.
-- Because detailed diffs can be inspected separately in popup review, do not require full original/revised sentence pairs in `Findings` unless they materially help disambiguate the issue.
-- When a `latexdiff-popup-review` is produced for the same changes, use the same substantive review criteria and map them into per-diff popup comments rather than treating popup review as a separate review standard.
-- Keep `## References` for external references only, following `document-workflow`.
+- 必要に応じて `Findings` item schema を繰り返す。
+- pure review、proposal-only revision work、applied revision work に同じ schema が使えるよう、`Issue Location` と `Issue Reason` を使う。
+- `Revision` は `Content` と `Nuance Shift` を持つ nested block として保つ。
+- input が `git diff` の場合、1 つの hunk から複数の findings が出ることがあり、同じ issue pattern に属する場合は 1 つの finding が複数の changed sites を cover することがある。
+- 1 つの finding が同じ issue の repeated instances を意図的に group する場合、`Issue Location` は複数の local sites を name してよい。
+- grouped sites が different reasoning、severity、revision judgment を必要とする場合だけ、grouped finding を split する。
+- detailed diffs は popup review で別途 inspect できるため、issue の disambiguation に materially help する場合を除き、`Findings` に full original/revised sentence pairs を必須にしない。
+- 同じ changes について `latexdiff-popup-review` を生成する場合、popup review を別の review standard として扱わず、同じ substantive review criteria を使って per-diff popup comments に map する。
+- `## References` は `document-workflow` に従い、external references 専用に保つ。
 
-## Mode-Specific Output Rules
+## Mode 別の出力規則
 
 - `review-only`
-  - Set `Revision -> Content` and `Revision -> Nuance Shift` to `none` for every finding.
-  - Keep `Safe Revisions Identified` and `Revisions Applied` as `none`.
+  - すべての finding で `Revision -> Content` と `Revision -> Nuance Shift` を `none` にする。
+  - `Safe Revisions Identified` と `Revisions Applied` は `none` に保つ。
 - `revision-no-change`
-  - Keep `Revisions Applied` as `none` even when safe revisions were identified.
+  - safe revisions が identified された場合でも、`Revisions Applied` は `none` に保つ。
 - `revision`
-  - `Safe Revisions Identified` and `Revisions Applied` should normally match unless some were intentionally left unapplied.
+  - 一部を意図的に unapplied のまま残した場合を除き、`Safe Revisions Identified` と `Revisions Applied` は通常一致させる。
 
-## References
+## 参照
 
-- Load [references/criteria.md](references/criteria.md) for review criteria.
-- Load [references/revision-principles.md](references/revision-principles.md) for revision constraints, and also for `review-only` diff review when judging whether a manuscript change is safe, local, and meaning-preserving.
+- review criteria には [references/criteria.md](references/criteria.md) を load する。
+- revision constraints には [references/revision-principles.md](references/revision-principles.md) を load する。また、`review-only` diff review で manuscript change が safe、local、meaning-preserving か判断するときにも load する。

@@ -16,6 +16,7 @@
 - Prefer a skill for detailed procedures; mention only when to use it here.
 - Use `skill-creator` when creating or updating skills.
 - For skill edits:
+  - write skill instructions in Japanese unless a specific reason requires another language;
   - use concise, structured Markdown;
   - prefer clear headings and short lists;
   - avoid long free-form prose;
@@ -31,7 +32,7 @@
 ## Verification
 - Treat important user claims as hypotheses until checked.
 - Re-check your own assumptions when accuracy matters.
-- Inspect rendered artifacts directly when correctness depends on PDFs, screenshots, images, or other generated output.
+- Inspect rendered artifacts directly only when correctness depends on visual rendering, such as figure, layout, spacing, screenshot, image, or other visual-output changes.
 
 ## References
 - Prefer primary sources, standards, and official documentation.

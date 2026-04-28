@@ -1,81 +1,81 @@
 # Paper Review Criteria
 
-Use only the sections relevant to the current review request.
-Treat these criteria as default review lenses, not as an exhaustive or closed list. If an important problem falls outside the listed categories, still report it and classify it by impact.
+current review request に relevant な sections だけを使う。
+これらの criteria は exhaustive または closed list ではなく、default review lenses として扱う。listed categories に収まらない重要な問題がある場合も報告し、impact によって classify する。
 
-## Evaluation Principles
+## 評価原則
 
-- Prioritize validity of claims over local stylistic polish.
-- Treat logical gaps, evidential weakness, reproducibility issues, mispositioning against prior work, and submission-rule violations as more serious than taste-based edits.
-- Judge issues by impact on reader understanding, correctness, and submission quality.
-- Do not let availability of a rewrite suggestion determine severity.
+- local stylistic polish よりも claims の validity を優先する。
+- logical gaps、evidential weakness、reproducibility issues、prior work に対する mispositioning、submission-rule violations は、taste-based edits より重大に扱う。
+- issues は reader understanding、correctness、submission quality への impact で判断する。
+- rewrite suggestion の有無で severity を決めない。
 
-## Criteria
+## 評価項目
 
-### 1. Claims and Contributions
+### 1. 主張と貢献
 
-- Is the paper's main contribution clear early enough?
-- Do the stated conclusions follow from what the paper actually shows?
-- Is the contribution framed at the right strength, without overclaiming?
+- paper の main contribution は十分早い段階で clear か。
+- stated conclusions は paper が実際に示している内容から follow するか。
+- contribution は overclaiming なしに適切な strength で framed されているか。
 
-### 2. Structure and Logical Flow
+### 2. 構成と論理の流れ
 
-- Do sections and paragraphs progress naturally from problem setup to conclusion?
-- Are definitions, assumptions, notation, and terminology introduced before they are used?
-- Does each paragraph's explanation actually support its lead claim?
+- sections と paragraphs は problem setup から conclusion へ自然に進んでいるか。
+- definitions、assumptions、notation、terminology は使われる前に導入されているか。
+- 各 paragraph の explanation は、その lead claim を実際に support しているか。
 
-### 3. Method, Evidence, and Validity
+### 3. 方法、根拠、妥当性
 
-- Can the reader follow what was done from the description provided?
-- Are experiments, analyses, or examples sufficient to support the stated claims?
-- Are limitations and prerequisites made explicit where needed?
-- Does the wording imply causation or generality that the evidence does not support?
+- reader は provided description から何が行われたかを follow できるか。
+- experiments、analyses、examples は stated claims を support するのに十分か。
+- limitations と prerequisites は必要な箇所で explicit になっているか。
+- wording が evidence で support されない causation または generality を imply していないか。
 
-### 4. Positioning Against Prior Work
+### 4. 先行研究に対する位置づけ
 
-- Are important related works missing?
-- Is the difference from prior work explained substantively rather than by relabeling?
-- Are citations connected to the claims they are meant to support?
+- 重要な related works が欠けていないか。
+- prior work との差分が relabeling ではなく substantively に説明されているか。
+- citations は、それが support するはずの claims に接続されているか。
 
-### 5. Expression and Readability
+### 5. 表現と読みやすさ
 
-- Are sentences so long or dense that subject, predicate, or modifier relations become unclear?
-- Are pronouns and short references such as `this`, `it`, or `they` unambiguous?
-- Are terminology, abbreviations, and symbols consistent?
-- Can the reader quickly find support for stronger claims?
+- sentences が長すぎる、または dense すぎるために、subject、predicate、modifier relations が unclear になっていないか。
+- `this`、`it`、`they` などの pronouns や short references は unambiguous か。
+- terminology、abbreviations、symbols は consistent か。
+- reader は stronger claims の support を素早く見つけられるか。
 
 ### 6. Academic English
 
-- Is the prose not only grammatical but natural as academic English?
-- Does translation-like wording create heavy noun phrases or unclear modification?
-- Does claim strength match the available support?
-- Are articles, number, countability, tense, and prepositions used naturally in context?
-- Are discourse markers and citation-integrated sentences natural at paragraph level, not just sentence level?
+- prose は grammatical であるだけでなく、academic English として natural か。
+- translation-like wording が heavy noun phrases や unclear modification を作っていないか。
+- claim strength は available support と合っているか。
+- articles、number、countability、tense、prepositions は context 内で natural に使われているか。
+- discourse markers と citation-integrated sentences は、sentence level だけでなく paragraph level でも natural か。
 
-### 7. Figures, Equations, and Citations
+### 7. 図、式、引用
 
-- Are figures and equations referenced and explained in the text?
-- Do captions carry enough meaning to orient the reader?
-- Do labels, references, and surrounding explanations agree?
-- Are citations integrated naturally both grammatically and rhetorically?
+- figures と equations は text 内で referenced され、explained されているか。
+- captions は reader を orient するのに十分な意味を持っているか。
+- labels、references、surrounding explanations は一致しているか。
+- citations は grammatical にも rhetorical にも自然に integrated されているか。
 
-### 8. Style and Submission Compliance
+### 8. style と submission compliance
 
-- Does the manuscript follow the required style file, class file, and bibliography style?
-- Are title, author information, affiliations, acknowledgments, anonymity, abstract, keywords, and headings compliant?
-- Are page limits, appendix rules, supplementary-material references, and camera-ready-only elements handled correctly?
-- Does manual formatting fight the style file or submission rules?
+- manuscript は required style file、class file、bibliography style に従っているか。
+- title、author information、affiliations、acknowledgments、anonymity、abstract、keywords、headings は compliant か。
+- page limits、appendix rules、supplementary-material references、camera-ready-only elements は正しく handled されているか。
+- manual formatting が style file または submission rules と conflict していないか。
 
-### 9. LaTeX and Page Quality
+### 9. LaTeX と page quality
 
-- Are headings, lists, figures, page breaks, and footnotes rendered cleanly?
-- Are equation numbers, figure numbers, references, and bibliography entries intact?
-- Does the PDF introduce ambiguity or awkwardness not obvious in source?
-- Does extracted PDF text reveal command leakage, annotation text, or wording artifacts that are easy to miss in source or page images?
+- headings、lists、figures、page breaks、footnotes は cleanly に rendered されているか。
+- equation numbers、figure numbers、references、bibliography entries は intact か。
+- PDF が source では obvious でない ambiguity または awkwardness を introduce していないか。
+- extracted PDF text が、source や page images では見落としやすい command leakage、annotation text、wording artifacts を reveal していないか。
 
-## Severity
+## 重大度
 
-- `major`: Problems that affect correctness of claims, logical coherence, methodological validity, reproducibility, positioning against prior work, or submission-rule compliance.
-- `moderate`: Problems that materially increase misreading risk, weaken explanations, create noticeable English awkwardness, break citation integration, or introduce important formatting issues.
-- `minor`: Local clarity improvements, terminology cleanup, limited ambiguity reduction, or light prose polishing.
-- `nit`: Purely preference-based tweaks with low impact.
+- `major`: claims の correctness、logical coherence、methodological validity、reproducibility、prior work に対する positioning、submission-rule compliance に影響する problems。
+- `moderate`: misreading risk を materially に増やす、explanations を弱める、noticeable English awkwardness を作る、citation integration を壊す、または important formatting issues を introduce する problems。
+- `minor`: local clarity improvements、terminology cleanup、limited ambiguity reduction、light prose polishing。
+- `nit`: impact が低い、純粋に preference-based な tweaks。
