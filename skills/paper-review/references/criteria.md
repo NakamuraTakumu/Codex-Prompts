@@ -1,81 +1,44 @@
-# Paper Review Criteria
+# 論文レビュー基準
 
-current review request に relevant な sections だけを使う。
-これらの criteria は exhaustive または closed list ではなく、default review lenses として扱う。listed categories に収まらない重要な問題がある場合も報告し、impact によって classify する。
+## 適用
+
+- **用途**: レビュー対象に応じて必要な評価面だけを選ぶ。
+- **非閉鎖性**: この基準は網羅 checklist ではない。分類外の重要 issue も影響に基づいて報告する。
 
 ## 評価原則
 
-- local stylistic polish よりも claims の validity を優先する。
-- logical gaps、evidential weakness、reproducibility issues、prior work に対する mispositioning、submission-rule violations は、taste-based edits より重大に扱う。
-- issues は reader understanding、correctness、submission quality への impact で判断する。
-- rewrite suggestion の有無で severity を決めない。
+- **優先順位**: 表現の polish より、正確性、論理的一貫性、根拠、再現性、先行研究との位置づけ、投稿規定を優先する。
+- **判断軸**: 読者理解、正確性、投稿品質への影響で severity を決める。
+- **非判断軸**: 修正案の有無や修正の容易さだけでは severity を下げない。
 
-## 評価項目
+## 評価面
 
-### 1. 主張と貢献
-
-- paper の main contribution は十分早い段階で clear か。
-- stated conclusions は paper が実際に示している内容から follow するか。
-- contribution は overclaiming なしに適切な strength で framed されているか。
-
-### 2. 構成と論理の流れ
-
-- sections と paragraphs は problem setup から conclusion へ自然に進んでいるか。
-- definitions、assumptions、notation、terminology は使われる前に導入されているか。
-- 各 paragraph の explanation は、その lead claim を実際に support しているか。
-
-### 3. 方法、根拠、妥当性
-
-- reader は provided description から何が行われたかを follow できるか。
-- experiments、analyses、examples は stated claims を support するのに十分か。
-- limitations と prerequisites は必要な箇所で explicit になっているか。
-- wording が evidence で support されない causation または generality を imply していないか。
-
-### 4. 先行研究に対する位置づけ
-
-- 重要な related works が欠けていないか。
-- prior work との差分が relabeling ではなく substantively に説明されているか。
-- citations は、それが support するはずの claims に接続されているか。
-
-### 5. 表現と読みやすさ
-
-- sentences が長すぎる、または dense すぎるために、subject、predicate、modifier relations が unclear になっていないか。
-- `this`、`it`、`they` などの pronouns や short references は unambiguous か。
-- terminology、abbreviations、symbols は consistent か。
-- reader は stronger claims の support を素早く見つけられるか。
-
-### 6. Academic English
-
-- prose は grammatical であるだけでなく、academic English として natural か。
-- translation-like wording が heavy noun phrases や unclear modification を作っていないか。
-- claim strength は available support と合っているか。
-- articles、number、countability、tense、prepositions は context 内で natural に使われているか。
-- discourse markers と citation-integrated sentences は、sentence level だけでなく paragraph level でも natural か。
-
-### 7. 図、式、引用
-
-- figures と equations は text 内で referenced され、explained されているか。
-- captions は reader を orient するのに十分な意味を持っているか。
-- labels、references、surrounding explanations は一致しているか。
-- citations は grammatical にも rhetorical にも自然に integrated されているか。
-
-### 8. style と submission compliance
-
-- manuscript は required style file、class file、bibliography style に従っているか。
-- title、author information、affiliations、acknowledgments、anonymity、abstract、keywords、headings は compliant か。
-- page limits、appendix rules、supplementary-material references、camera-ready-only elements は正しく handled されているか。
-- manual formatting が style file または submission rules と conflict していないか。
-
-### 9. LaTeX と page quality
-
-- headings、lists、figures、page breaks、footnotes は cleanly に rendered されているか。
-- equation numbers、figure numbers、references、bibliography entries は intact か。
-- PDF が source では obvious でない ambiguity または awkwardness を introduce していないか。
-- extracted PDF text が、source や page images では見落としやすい command leakage、annotation text、wording artifacts を reveal していないか。
+- **主張と貢献**:
+  - **対象**: 主要貢献、結論、貢献の位置づけ。
+  - **見る問題**: 貢献不明、過大主張、根拠から導けない結論。
+- **構成と論理**:
+  - **対象**: 節、段落、定義、仮定、記法、用語。
+  - **見る問題**: 論理の飛躍、導入不足、段落冒頭の主張を支えない説明。
+- **定理系環境**:
+  - **対象**: definition、theorem、proposition、lemma、corollary、proof、remark、example。
+  - **見る問題**: 環境の役割不一致、statement と proof の不対応、仮定や量化の欠落、definition への性質混入、remark や example に隠れた必須主張。
+- **方法、根拠、妥当性**:
+  - **対象**: 方法説明、実験、分析、例、制限、前提条件、因果表現、一般性表現。
+  - **見る問題**: 手順の追跡不能、根拠不足、制限の未提示、根拠のない因果関係や一般化。
+- **先行研究と引用**:
+  - **対象**: 先行研究、差分説明、引用文、引用と主張の接続。
+  - **見る問題**: 重要文献の欠落、名前の付け替えに留まる差分説明、引用が主張を支えていない箇所、引用文の不自然な組み込み。
+- **表現と言語**:
+  - **対象**: 文、参照表現、用語、略語、記号、文体、日本語または英語の学術表現。
+  - **見る問題**: 指示語や修飾関係の曖昧さ、用語不統一、対象言語として目立つ不自然さ、根拠に合わない主張の強さ。
+- **図、式、LaTeX、投稿規定**:
+  - **対象**: 図、式、caption、label、参照、rendered PDF、抽出 PDF テキスト、style file、class file、bibliography style、front matter、分量。
+  - **見る問題**: 本文との未接続、番号や参照の破損、source では見えない表示上の曖昧さ、command leakage、投稿規定違反、手動整形と style file の衝突。
 
 ## 重大度
 
-- `major`: claims の correctness、logical coherence、methodological validity、reproducibility、prior work に対する positioning、submission-rule compliance に影響する problems。
-- `moderate`: misreading risk を materially に増やす、explanations を弱める、noticeable English awkwardness を作る、citation integration を壊す、または important formatting issues を introduce する problems。
-- `minor`: local clarity improvements、terminology cleanup、limited ambiguity reduction、light prose polishing。
-- `nit`: impact が低い、純粋に preference-based な tweaks。
+- **判定規則**: 複数の重大度にまたがる場合は、最大影響で判定する。
+- **`major`**: 正確性、論理的一貫性、方法論的妥当性、再現性、先行研究の位置づけ、投稿規定遵守、定理系環境の論理的役割に影響する。
+- **`moderate`**: 誤読リスクを実質的に増やす、説明を弱める、引用文の組み込みを壊す、重要な体裁問題を作る、対象言語で目立つ不自然さを作る。
+- **`minor`**: 局所的な明瞭化、用語整理、限定的な曖昧性低減、軽い文章改善。
+- **`nit`**: 影響が低い、または好みに基づく変更にとどまる。

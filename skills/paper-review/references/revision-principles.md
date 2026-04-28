@@ -1,42 +1,27 @@
-# Paper Revision Principles
+# 論文修正原則
 
-manuscript revision の default constraints として、これらの principles を使う。
+原稿修正時の安全制約として使う。
 
-## 中核方針
+## 適用
 
-- default では meaning を preserve する。
-- broader rewriting よりも smallest safe local revision を優先する。
-- revisions は manuscript の existing style、terminology、notation と consistent に保つ。
+- **対象**: 表現修正、引用文の組み込み、style file 変更後の表現調整、局所的な論理整理、LaTeX source の可読性改善。
+- **非対象**: 大幅な構成変更、論文の主張を意図的に変える修正。
 
-## Scope 制御
+## 修正制約
 
-- safe local fix を完了するために必要でない限り、requested scope を超えて edit を広げない。
-- problem が safe local fix には大きすぎる場合、自分だけで broad に rewrite しない。ユーザーが scope を広げない限り、issue を説明し finding として残す。
+- **意味保持**: 主張、含意、論理関係、帰属、確実性、限定条件を暗黙に変えない。
+- **最小修正**: 広い書き換えより、安全な局所修正を優先する。収まらない問題は広く書き換えない。
+- **内容追加禁止**: 求められていない主張、根拠、比較、例、留保、解釈を追加しない。
+- **範囲保持**: 安全な局所修正に必要でない限り、指定範囲、環境種別、節構成、段落構成を変えない。
+- **一貫性保持**: 原稿の既存文体、用語、記法、著者の声、近傍の反復 pattern に合わせる。
+- **引用文と macro**: command の差し替えだけで済ませず、文全体と修辞上の接続を確認する。
 
-## 意味保持
+## 一般手段
 
-- 指示がない限り、claims、implications、logical relations、attribution、certainty、limiting conditions を変えない。
-- 複数の revisions が可能な場合、最も polished phrasing ではなく semantic drift が最小のものを選ぶ。
-- 求められていない限り、新しい claims、support、comparisons、examples、caveats、warnings、interpretations を追加しない。
+- **TODO marker**: 最小修正に収まらない問題は、追加 package なしの LaTeX で使える `\marginpar{\footnotesize TODO: ...}` で短く残す。`...` は未解決の作業を命令形または名詞句で書き、理由や長い説明を入れない。`\marginpar` が使えない文脈では近傍の本文段落に置き、近傍にも置けない場合は所見として残す。
 
-## Manuscript の一貫性
+## 表示結果
 
-- manuscript の existing vocabulary、style、English level、notation、authorial voice に合わせる。
-- terminology、symbols、definitions、abbreviations、reference expressions、citation handling を paper の他部分と consistent に保つ。
-- rule が明示的に documented されていない場合でも、nearby text の repeated local patterns を style evidence として扱う。
-- word または expression を revise するときは、change が nearby context で引き続き機能し、manuscript 内の他所の parallel usage を壊さないことを確認する。
-
-## Citation と sentence-level revision
-
-- citation revision とその他の macro-affected wording は、macro substitution exercise ではなく sentence-level と rhetoric-level の revision として扱う。
-- phrasing が citation または他の macro の prose への integration に依存する場合、commands を差し替えるだけでなく sentence 全体を revise する。
-
-## Rendered Output の確認
-
-- rendering が重要な場合、source だけに依存しない。
-- small source edits であっても、references、figure connections、line breaks、lists、equations の周辺で rendered PDF を悪化させない。
-
-## 想定 scope
-
-- これらの principles は、English phrasing fixes、citation integration、style-file changes 後の wording adjustments、local logical cleanup、LaTeX readability improvements に適用する。
-- major restructuring や paper's claims を意図的に変える revisions では、これらの principles だけに依存しない。
+- **確認条件**: rendering 結果が修正対象またはリスク対象である場合。
+- **確認規則**: 確認条件を満たす場合は source だけで判断せず、表示結果を確認する。
+- **対象例**: figure、caption、front matter、page break、visual annotation、layout-sensitive construct。

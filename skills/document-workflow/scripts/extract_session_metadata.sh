@@ -1,37 +1,50 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Usage:
+# 使い方:
 #   extract_session_metadata.sh [--thread-id <id>] [--sessions-root <dir>] [--format markdown|json]
 #
-# Purpose:
-#   Read the current Codex session log and print note metadata fields without
-#   relying on config.toml.
+# 目的:
+#   現在の Codex セッションログを読み、config.toml に依存せず
+#   記録用メタデータ field を出力する。
 #
-# Inputs:
-#   --thread-id <id>      Optional. Defaults to $CODEX_THREAD_ID.
-#   --sessions-root <dir> Optional. Defaults to /home/nakamura/.codex/sessions.
-#   --format <fmt>        Optional. One of: markdown, json. Defaults to markdown.
+# 入力:
+#   --thread-id <id>      任意。既定値は $CODEX_THREAD_ID。
+#   --sessions-root <dir> 任意。既定値は /home/nakamura/.codex/sessions。
+#   --format <fmt>        任意。markdown または json。既定値は markdown。
 #
-# Output:
-#   Writes metadata for Model, Reasoning-Effort, and Session to stdout.
-#   In markdown format, the output is suitable for direct insertion into a note.
+# 出力:
+#   Model、Reasoning-Effort、Session のメタデータを stdout に書く。
+#   markdown format では、Created/Updated の後に挿入できる形式で出力する。
 
 thread_id="${CODEX_THREAD_ID:-}"
 sessions_root="/home/nakamura/.codex/sessions"
 format="markdown"
 
+require_value() {
+  local option="$1"
+  local value="${2:-}"
+
+  if [[ -z "$value" ]]; then
+    echo "$option には値が必要です。" >&2
+    exit 1
+  fi
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --thread-id)
+      require_value "$1" "${2:-}"
       thread_id="${2:-}"
       shift 2
       ;;
     --sessions-root)
+      require_value "$1" "${2:-}"
       sessions_root="${2:-}"
       shift 2
       ;;
     --format)
+      require_value "$1" "${2:-}"
       format="${2:-}"
       shift 2
       ;;
@@ -40,19 +53,31 @@ while [[ $# -gt 0 ]]; do
       exit 0
       ;;
     *)
-      echo "Unknown argument: $1" >&2
+      echo "不明な argument: $1" >&2
       exit 1
       ;;
   esac
 done
 
+missing_commands=()
+for command_name in find rg jq; do
+  if ! command -v "$command_name" >/dev/null 2>&1; then
+    missing_commands+=("$command_name")
+  fi
+done
+
+if [[ "${#missing_commands[@]}" -gt 0 ]]; then
+  echo "必要な command が見つかりません: ${missing_commands[*]}" >&2
+  exit 1
+fi
+
 if [[ -z "$thread_id" ]]; then
-  echo "CODEX_THREAD_ID is not set and --thread-id was not provided." >&2
+  echo "CODEX_THREAD_ID が未設定で、--thread-id も指定されていません。" >&2
   exit 1
 fi
 
 if [[ ! -d "$sessions_root" ]]; then
-  echo "Sessions root not found: $sessions_root" >&2
+  echo "sessions root が見つかりません: $sessions_root" >&2
   exit 1
 fi
 
@@ -61,14 +86,14 @@ session_file="$(
 )"
 
 if [[ -z "$session_file" ]]; then
-  echo "Session log not found for thread: $thread_id" >&2
+  echo "thread に対応する session log が見つかりません: $thread_id" >&2
   exit 1
 fi
 
-turn_context_line="$(rg -m 1 '"type":"turn_context"' "$session_file" || true)"
+turn_context_line="$(rg '"type":"turn_context"' "$session_file" | tail -n 1 || true)"
 
 if [[ -z "$turn_context_line" ]]; then
-  echo "No turn_context entry found in session log: $session_file" >&2
+  echo "session log に turn_context entry が見つかりません: $session_file" >&2
   exit 1
 fi
 
@@ -96,7 +121,7 @@ case "$format" in
       '{model: $model, reasoning_effort: $reasoning_effort, session: $session}'
     ;;
   *)
-    echo "Unsupported format: $format" >&2
+    echo "未対応の format: $format" >&2
     exit 1
     ;;
 esac

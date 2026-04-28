@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 #
-# Usage:
+# 使い方:
 #   ./tool/rotate_document_before_commit.sh
 #
-# Purpose:
-#   Rotate documents under the configured directory before commit.
-#   - Finalize <dir>/previous/ into <dir>/<HEAD shortsha>-<HEAD slug>/
-#   - Move current working files from <dir>/ root into <dir>/previous/
+# 目的:
+#   設定されたディレクトリ配下の文書をコミット前にローテーションする。
+#   - <dir>/previous/ を <dir>/<HEAD shortsha>-<HEAD slug>/ に確定する。
+#   - <dir>/ 直下の現在の作業ファイルを <dir>/previous/ に移動する。
 #
-# Exit non-zero if rotation cannot be completed safely.
+# ローテーションを安全に完了できない場合は non-zero で終了する。
 
 set -euo pipefail
 
@@ -26,10 +26,21 @@ fi
 doc_dir="${ROTATE_DOCUMENT_DIR:-document}"
 doc_dir="${doc_dir%/}"
 
-if [[ -z "$doc_dir" ]]; then
-  echo "rotate_document_before_commit: ROTATE_DOCUMENT_DIR must not be empty" >&2
-  exit 1
-fi
+validate_doc_dir() {
+  local value="$1"
+
+  if [[ -z "$value" ]]; then
+    echo "rotate_document_before_commit: ROTATE_DOCUMENT_DIR は空にできません" >&2
+    exit 1
+  fi
+
+  if [[ "$value" == /* || "$value" =~ (^|/)\.\.?($|/) ]]; then
+    echo "rotate_document_before_commit: ROTATE_DOCUMENT_DIR は repository root からの安全な相対パスにしてください: $value" >&2
+    exit 1
+  fi
+}
+
+validate_doc_dir "$doc_dir"
 
 previous_dir="$doc_dir/previous"
 
@@ -56,7 +67,8 @@ finalize_previous() {
   archive_dir="$doc_dir/${shortsha}-${slug}"
 
   if [[ -e "$archive_dir" ]]; then
-    return 0
+    echo "rotate_document_before_commit: archive already exists: $archive_dir" >&2
+    exit 1
   fi
 
   mv "$previous_dir" "$archive_dir"
@@ -80,7 +92,7 @@ merge_dir_into_dir() {
         merge_dir_into_dir "$child" "$target"
         rmdir "$child"
       else
-        echo "rotate_document_before_commit: destination already exists: $target" >&2
+        echo "rotate_document_before_commit: 移動先は既に存在します: $target" >&2
         exit 1
       fi
     else
@@ -103,7 +115,7 @@ move_root_entries_to_previous() {
       continue
     fi
 
-    if [[ "$base" =~ ^[0-9a-f]{7,40}- ]]; then
+    if [[ -d "$path" && "$base" =~ ^[0-9a-f]{7,40}- ]]; then
       continue
     fi
 

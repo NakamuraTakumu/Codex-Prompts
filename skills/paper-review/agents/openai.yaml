@@ -1,4 +1,4 @@
 interface:
   display_name: "論文レビュー"
-  short_description: "論文を review し、必要に応じて review しながら revise する"
-  default_prompt: "私の依頼内容に応じて、$paper-review を使ってこの manuscript を review するか、review しながら revise してください。"
+  short_description: "日本語・英語の論文と LaTeX 原稿を制約付きでレビューし、修正案または局所修正を扱う"
+  default_prompt: "私の依頼内容に応じて、$paper-review を使ってこの原稿をレビュー、修正案作成、または安全な局所修正してください。"

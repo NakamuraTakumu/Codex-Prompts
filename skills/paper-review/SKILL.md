@@ -1,152 +1,181 @@
 ---
 name: paper-review
-description: explicit scholarly constraints の下で、academic papers と LaTeX manuscripts を local revision ありまたはなしで review する。Codex が (1) revision proposals なしで findings のみを出す、(2) files を編集せず review と safe revision proposals を行う、または (3) claims、scope、logic、terminology、authorial voice を silently change せずに issue を直す safe local edits を行う必要があるときに使う。
+description: 日本語または英語の学術論文と LaTeX 原稿を、学術的制約の下でレビュー、修正案作成、または安全な局所修正するときに使う。
 ---
 
-# Paper Review
+# 論文レビュー
 
-paper review が explicit scholarly constraints に従う必要がある場合に、この skill を使う。task が findings で止まる場合にも、local revision work まで進む場合にも使う。
+## 目的
 
-## Modes
+- **対象**: 日本語または英語の学術論文、LaTeX 原稿、論文差分。
+- **用途**: レビュー、修正案作成、安全な局所修正。
+- **制約**: 主張、範囲、論理、用語、著者の声を暗黙に変えない。
 
-- `review-only`
-  - findings のみを報告する。
-  - revisions を提案しない。
-  - manuscript files を編集しない。
-  - review surface は full manuscript text ではなく `git diff` でもよい。
-- `revision-no-change`
-  - findings を報告する。
-  - safe revisions を提案する。
-  - manuscript files を編集しない。
-- `revision`
-  - findings を報告する。
-  - manuscript files に safe local revisions を適用する。
+## モード
 
-## Mode 推定
+- **`review-only`**:
+  - **成果物**: 所見。
+  - **修正案**: 提案しない。
+  - **原稿編集**: しない。
+  - **Markdown note**: **記録方針** に従う。
+  - **レビュー面**: 原稿全体または `git diff`。
+- **`revision-no-change`**:
+  - **成果物**: 所見と **安全な修正案**。
+  - **修正案**: 提案する。
+  - **原稿編集**: しない。
+  - **Markdown note**: **記録方針** に従う。
+  - **レビュー面**: 原稿全体、section、または `git diff`。
+- **`revision`**:
+  - **成果物**: 所見と適用済み修正。
+  - **修正案**: 必要に応じて記録する。
+  - **原稿編集**: **安全な局所修正**だけを適用する。
+  - **Markdown note**: **記録方針** に従う。
+  - **レビュー面**: 修正対象と近傍文脈。
 
-- inspect、check、review、assess、issues の summarize を求める request は、default で `review-only`。
-- revisions の suggest、propose、recommend、outline を求める request は、default で `revision-no-change`。
-- text の fix、revise、polish、clean up、adjust を求める request は、default で `revision`。
+## 用語
+
+- **安全な修正案**: 原稿ファイルを編集せずに報告する局所修正候補。
+- **安全な局所修正**: 指定範囲内で、意味ずれを避けて原稿ファイルに適用する修正。
+- **意味ずれ**: 主張、範囲、論理、用語、著者の声に対する意味上の変化。
+- **観測された意味ずれ**: 入力差分、既存変更、popup-review 対象 change による意味ずれ。
+- **修正による意味ずれ**: 提案または適用した修正が起こす意味ずれ。
+
+## モード推定
+
+- **`review-only`**:
+  - **判定条件**: 問題抽出、レビュー、確認、コメント、issue 要約だけを求める。
+  - **既定動作**: 所見だけを返す。
+  - **迷う場合**: ファイル編集には進まない。
+- **`revision-no-change`**:
+  - **判定条件**: 修正案、改善案、添削案、recommendation を求める。
+  - **既定動作**: 安全な修正案を返す。
+  - **迷う場合**: ファイル編集には進まない。
+- **`revision`**:
+  - **判定条件**: 原稿ファイルへの反映を求める。
+  - **既定動作**: 安全な局所修正を適用する。
+  - **迷う場合**: 反映意図が弱ければ `revision-no-change` に倒す。
+
+## 副作用契約
+
+- **根拠収集**:
+  - **許可**: すべてのモード。
+  - **対象**: source、差分、ビルドログ、抽出 PDF テキスト、rendered PDF。
+  - **条件**: scope に直接対応する根拠に限る。
+  - **禁止**: 範囲外ファイルを追加文脈のためだけに読む。
+- **Markdown note**:
+  - **許可**: すべてのモード。
+  - **対象**: レビュー note。
+  - **条件**: **記録方針** に従う。
+  - **禁止**: 原稿編集と混同しない。
+- **原稿編集**:
+  - **許可**: `revision` mode のみ。
+  - **対象**: scope 内の原稿ファイル。
+  - **条件**: 安全な局所修正として成立する。
+  - **禁止**: scope を暗黙に広げる。
+- **note 作成例外**:
+  - **許可**: すべてのモード。
+  - **対象**: Markdown note。
+  - **条件**: chat-only、一時利用、記録不要、note 作成禁止の明示。
+  - **禁止**: 例外条件があるのに note を作る。
 
 ## ワークフロー
 
-1. scope を固定する。
-   - target が whole manuscript、section、diff、または citations や front matter などの narrow issue のどれかを決める。
-   - ユーザーが broader coverage を明示的に求めた場合、または concrete blocker により extra local context が厳密に必要な場合を除き、review target 外の files を読まない。
-2. in-scope review units を列挙する。
-   - task が narrow な場合、section 内のすべての citations など、relevant objects を先に list する。
-   - input が `git diff` の場合、in-scope items は raw diff lines や whole hunks ではなく reviewable change units として定義する。
-   - repeated local issue patterns は、redundancy を減らせる場合に group する。
-3. review blockers を取り除く。
-   - 後続判断を unreliable にする fatal build failures、unresolved references、unresolved citations、missing bibliography output を確認する。
-4. criteria と evidence を選ぶ。
-   - [references/criteria.md](references/criteria.md) の relevant parts だけを load する。
-   - revision が in scope の場合、および `review-only` で `git diff` 内の manuscript changes が safe、local、meaning-preserving か判断する場合は、[references/revision-principles.md](references/revision-principles.md) を load する。
-   - この request に必要な evidence だけを選ぶ: source、PDF、build log、diff、author guidelines、またはその他の直接 relevant artifacts。
-   - target-bound evidence set を優先する: reviewed file(s)、corresponding rendered artifact(s)、corresponding build log(s)。
-5. すべての in-scope items を review する。
-   - important issues が selected criteria にきれいに収まらないという理由だけで suppress しない。
-   - review surface が `git diff` の場合、genuinely different issue types は separate findings に分ける。ただし rationale、severity、revision judgment が同じ repeated sites は 1 つの finding で cover してよい。
-6. mode に従って revisions を判断し扱う。
-   - `review-only`: problem identification で止める。
-   - `revision-no-change`: safe revisions を record するが、files は編集しない。
-   - `revision`: smallest sufficient safe local revision を適用する。
-   - ユーザーが substantive change を求めていない限り、meaning を preserve する。
-   - citation fixes とその他の macro-affected wording は、macro substitution だけでなく prose revision として扱う。
-   - sound fix が local でなくなった場合、revision を silently widen せず finding として残す。
-7. 再確認して報告する。
-   - proposed または applied revision を original intent と nearby context に照らして再確認する。
-   - task 完了扱いにする前に、Markdown review note を save または update する。
-   - `document-workflow` を使って storage location を選び、note を final findings と revision status に align させる。
-   - safe に revise するには risky または broad すぎた unresolved issues も含め、explicit severity labels 付きで findings を報告する。
+1. **モードと scope を固定する**。
+   - **入力**: user request、対象 file、対象 diff。
+   - **処理**: モード、対象種別、scope を決める。
+   - **出力**: 原稿全体、section、定理系環境、diff、citation、front matter、narrow issue のいずれか。
+   - **制約**: 範囲外 file は読まない。
+2. **レビュー単位を列挙する**。
+   - **入力**: scope、source、diff。
+   - **処理**: レビュー可能な単位に分ける。
+   - **出力**: レビュー単位 list。
+   - **制約**: `git diff` は raw line ではなく意味のある変更単位に分ける。
+3. **review blocker を確認する**。
+   - **入力**: ビルドログ、reference 状態、citation 状態、bibliography output。
+   - **処理**: 後続判断を壊す blocker を確認する。
+   - **出力**: blocker の有無。
+   - **制約**: 修正は `revision` mode かつ安全な局所修正の範囲だけ。
+4. **基準と根拠を選ぶ**。
+   - **入力**: レビュー単位 list、task type、利用可能な artifact。
+   - **処理**: 対象言語、task type、artifact に対応する基準と根拠だけを選ぶ。
+   - **出力**: 基準 subset、根拠 set。
+   - **制約**: レビュー対象に直接対応する根拠を優先する。
+5. **すべてのレビュー単位を確認する**。
+   - **入力**: レビュー単位 list、基準 subset、根拠 set。
+   - **処理**: issue を確認し、必要なら group する。
+   - **出力**: 所見候補。
+   - **制約**: 基準の分類に収まらない重要 issue も抑制しない。
+6. **モードに従って revision を扱う**。
+   - **入力**: モード、所見候補、修正候補。
+   - **処理**: 修正案の記録または安全な局所修正の適用を行う。
+   - **出力**: 所見、安全な修正案、適用済み修正。
+   - **制約**: 実質的変更の依頼がない限り意味保持を守る。
+7. **再確認して報告する**。
+   - **入力**: 所見、安全な修正案、適用済み修正、未解決 issue。
+   - **処理**: 元の意図と近傍文脈で再確認する。
+   - **出力**: 報告、必要なら Markdown note。
+   - **制約**: 未解決 issue には severity label を付ける。
 
-## Revision の guardrails
+## Revision 契約
 
-- 近くにあるという理由だけで、unrelated issues へ edits を広げない。
-- 求められていない限り、新しい claims、evidence、examples、comparisons、caveats、interpretations を追加しない。
-- manuscript の style を、より洗練されているが less faithful な prose で置き換えない。
-- established terminology、notation、definitions、abbreviations、references、citation conventions を壊さない。
-- requested fix が meaning preservation または local-only editing と衝突する場合は、その旨を明示する。
+- **基本規則**: revision が scope 内なら [references/revision-principles.md](references/revision-principles.md) を適用する。
+- **衝突時**: 意味保持または局所修正と衝突する requested fix は所見として残す。
+- **禁止**: scope を暗黙に広げない。
+- **citation / macro**: sentence-level と rhetoric-level の revision として扱う。
 
 ## 検証
 
-- layout、cross-references、figures、captions、front matter、citation integration が rendering 後に変わりうる場合は PDF を使う。
-- compile failures、unresolved references、unresolved citations、bibliography generation issues には build logs を使う。
-- revision が in scope の場合、proposed または revised passage を original text と nearby context に照らして読み直す。
-- LaTeX manuscripts では、citation wording または presentation が関わる場合、source と PDF の両方で verification することを優先する。
-- wording が LaTeX commands、macros、annotations、PDF extraction artifacts の影響を受けうる場合、phrasing を判断する前に extracted PDF text を直接 inspect する。
-- ユーザーが broader review を明示的に求めない限り、verification は review target とその directly corresponding artifacts に結びつける。extra context を集めるためだけに unrelated files を読まない。
+- **基本根拠**: source と、scope に直接対応する根拠。
+- **差分レビュー**: `git diff` を使う。raw line ではなく意味のある変更単位を確認する。
+- **ビルドログ**:
+  - **条件**: build failure、unresolved reference、unresolved citation、bibliography issue が対象または blocker。
+- **revision 再読**:
+  - **条件**: revision が scope 内。
+  - **対象**: 元テキスト、修正後 passage、近傍文脈。
+- **抽出 PDF テキスト**:
+  - **条件**: wording が LaTeX command、macro、annotation、PDF 抽出 artifact の影響を受けうる。
+- **rendered PDF**:
+  - **条件**: layout、figure、caption、front matter、page break、visual annotation が issue 対象。
+- **範囲制限**:
+  - **原則**: 広いレビューの明示がなければ、レビュー対象に対応する artifact だけを見る。
+  - **禁止**: 追加文脈のためだけに範囲外ファイルを読む。
 
 ## 報告
 
-- findings を先に出し、summary は secondary にする。
-- review findings、identified safe revisions、actually applied revisions を区別する。
-- task が manuscript、section、diff に関する場合、ユーザーが severity-first reporting を明示的に求めない限り、findings は source order で並べる。
-- review surface が `git diff` の場合、findings を diff lines や whole hunks に機械的に map しない。separable semantic changes の level で report する。
-- near-duplicate findings を繰り返すより、repeated issue patterns を group することを優先する。
-- unresolved issues は severity 順に並べる。
-- 可能な場合、concrete file または artifact locations を cite する。
+- **順序**: 所見を先に出す。summary は補助情報。
+- **区別**: レビュー所見、安全な修正案、適用済み安全局所修正。
+- **所見順序**: 原稿、section、diff task では原則 source order。
+- **例外**: ユーザーが重大度順の報告を明示した場合。
+- **差分所見**: hunk や diff line に機械的に map しない。
+- **反復 issue**: 近い重複は group する。
+- **未解決 summary**: `Revision Status` 内では severity 順。
+- **位置**: 可能なら file、artifact、section、page を示す。
 
-## Output Markdown 形式
+## 記録方針
 
-- higher-priority instruction が明示的に禁止しない限り、すべての `paper-review` task について task 完了扱いの前に Markdown note を save または update する。
-- storage location と standard outer document structure の選択には `document-workflow` を使う。
-- title、metadata block、`Purpose:`、`## Background`、`## Content`、末尾の `## References` は `document-workflow` に align させる。
-- `paper-review` は `## Content` 内部だけを standardize する。
+- **既定**: 通常の `paper-review` task では、完了前に Markdown note を save または update する。
+- **原稿編集扱い**: Markdown note は原稿編集に含めない。
+- **保存先**: `document-workflow` に従う。
+- **outer structure**: `document-workflow` に従う。
+- **`## Content`**: [references/output-note.md](references/output-note.md) に従う。
+- **popup-review 中間利用**:
+  - **note**: 作らない。
+  - **所見**: 一時データとして扱う。
+  - **変換先**: popup ID に対応付け、`comments JSON` に反映する。
+- **同一 changes の popup review**:
+  - **基準**: 別基準にしない。
+  - **扱い**: 同じ実質レビュー基準を使う。
 
-```md
-## Content
+## Popup Review 連携
 
-### Summary
-
-<短い review summary>
-
-### Findings
-
-1. <短い finding title>
-   - Issue Location: <section / paragraph / sentence / file / page>
-   - Severity: <major | moderate | minor | nit>
-   - Issue Reason: <なぜ revised すべきか>
-   - Revision:
-     - Content: <intended change の rough description。change を提案しない場合は `none`>
-     - Nuance Shift: <wording または meaning がどう shift するか。meaning preservation が目的なら `none`>
-
-### Revision Status
-
-- Mode: <review-only | revision-no-change | revision>
-- Safe Revisions Identified: <list または none>
-- Revisions Applied: <list または none>
-- Unresolved Issues: <短い note または none>
-
-### Verification
-
-- Source: <checked した内容>
-- PDF: <checked した内容、または checked していない内容>
-- Build Log: <checked した内容、または checked していない内容>
-- Other Evidence: <diff / guideline / style file / none>
-```
-
-- 必要に応じて `Findings` item schema を繰り返す。
-- pure review、proposal-only revision work、applied revision work に同じ schema が使えるよう、`Issue Location` と `Issue Reason` を使う。
-- `Revision` は `Content` と `Nuance Shift` を持つ nested block として保つ。
-- input が `git diff` の場合、1 つの hunk から複数の findings が出ることがあり、同じ issue pattern に属する場合は 1 つの finding が複数の changed sites を cover することがある。
-- 1 つの finding が同じ issue の repeated instances を意図的に group する場合、`Issue Location` は複数の local sites を name してよい。
-- grouped sites が different reasoning、severity、revision judgment を必要とする場合だけ、grouped finding を split する。
-- detailed diffs は popup review で別途 inspect できるため、issue の disambiguation に materially help する場合を除き、`Findings` に full original/revised sentence pairs を必須にしない。
-- 同じ changes について `latexdiff-popup-review` を生成する場合、popup review を別の review standard として扱わず、同じ substantive review criteria を使って per-diff popup comments に map する。
-- `## References` は `document-workflow` に従い、external references 専用に保つ。
-
-## Mode 別の出力規則
-
-- `review-only`
-  - すべての finding で `Revision -> Content` と `Revision -> Nuance Shift` を `none` にする。
-  - `Safe Revisions Identified` と `Revisions Applied` は `none` に保つ。
-- `revision-no-change`
-  - safe revisions が identified された場合でも、`Revisions Applied` は `none` に保つ。
-- `revision`
-  - 一部を意図的に unapplied のまま残した場合を除き、`Safe Revisions Identified` と `Revisions Applied` は通常一致させる。
+- **`paper-review` の責務**: 学術的な所見を作る。
+- **`latexdiff-popup-review` の責務**: popup ID 対応、`comments JSON` schema、annotation 生成。
+- **中間所見**:
+  - **必須情報**: 対象変更、issue reason、severity、観測された意味ずれ。
+- **変換時の保持**: 観測された意味ずれの判断を失わない。
 
 ## 参照
 
-- review criteria には [references/criteria.md](references/criteria.md) を load する。
-- revision constraints には [references/revision-principles.md](references/revision-principles.md) を load する。また、`review-only` diff review で manuscript change が safe、local、meaning-preserving か判断するときにも load する。
+- **レビュー基準**: [references/criteria.md](references/criteria.md) を読む。
+- **修正制約**: [references/revision-principles.md](references/revision-principles.md) を読む。
+- **差分レビューの安全判断**: `review-only` でも [references/revision-principles.md](references/revision-principles.md) を読む。

@@ -1,210 +1,178 @@
 ---
 name: document-workflow
-description: Use in any Git repository. Treat `document/` as managed by the standard document-workflow rotation model by default, install the standard setup if the required files or settings are missing unless the repository already has a deliberate alternative or the user explicitly asks not to change it, and decide whether notes belong in repository-local documentation or the global `/home/nakamura/.codex/document/` store.
+description: 任意の Git リポジトリで使う。`document/` は標準の document-workflow ローテーションモデルで管理されるものとして扱い、必要なファイルや設定が欠けている場合は、リポジトリに明示的な代替方式がある場合またはユーザーが変更しないよう明示した場合を除き、標準設定を導入する。記録をリポジトリ内文書に置くか、グローバルな `/home/nakamura/.codex/document/` に置くかも判断する。
 ---
 
-# Document Workflow
+# ドキュメントワークフロー
 
-Use this skill in any Git repository.
+任意の Git リポジトリでこのスキルを使う。
 
-Treat `document/` as managed by the standard document-workflow rotation model by default.
+`document/` は、標準の document-workflow ローテーションモデルで管理されるものとして扱う。
 
-If the standard document-workflow files or settings are missing, install them unless the repository already has a deliberate alternative or the user explicitly asks not to change it.
+標準の document-workflow 用ファイルまたは設定が欠けている場合は、リポジトリに明示的な代替方式がある場合またはユーザーが変更しないよう明示した場合を除き、それらを導入する。
 
-This skill is about document management policy and repository workflow rather than the document contents themselves.
+このスキルは文書の内容そのものではなく、文書管理方針とリポジトリワークフローを扱う。
 
-Typical cases:
-- entering a Git repository that does not yet have the standard document-workflow setup
-- deciding whether a note belongs in a repository `document/` directory or in `/home/nakamura/.codex/document/`
-- deciding whether a repository note should live under `document/` or `knowledge/`
-- introducing or updating repository document rotation
-- setting up `.githooks/`, `tool/setup_git_hooks.sh`, and related scripts for document handling
-- creating a new repository and establishing its document storage rules
-- standardizing document workflow setup across repositories
-- finding that a repository is using document notes or temporary working docs but the document-workflow setup has not been installed yet
+典型的な場面:
+- 標準 document-workflow 設定がまだない Git リポジトリに入ったとき
+- 記録をリポジトリの `document/` に置くか、`/home/nakamura/.codex/document/` に置くか判断するとき
+- リポジトリの記録を `document/` と `knowledge/` のどちらに置くか判断するとき
+- リポジトリ文書ローテーションを導入または更新するとき
+- 文書処理用の `.githooks/`、`tool/setup_git_hooks.sh`、関連スクリプトを設定するとき
+- 新しいリポジトリを作成し、文書保存規則を整えるとき
+- 複数リポジトリの document-workflow 設定を標準化するとき
+- リポジトリが文書メモや一時作業文書を使っているのに、document-workflow 設定が未導入だと分かったとき
 
-## Storage Policy
+## 保存方針
 
-- Choose storage class before location: decide `document/` vs `knowledge/` first, then decide repository-local vs global scope.
-- Use `document/` for notes and documents that depend on the current code state, current branch state, or specific commits.
-- Use `knowledge/` for notes and documents that should remain useful even as the code changes, such as reusable findings, stable references, and general lessons.
-- If a note is specific to one workspace or repository, store it in that workspace's local `document/` directory.
-- If a note is not tied to any specific workspace or repository, store it in `/home/nakamura/.codex/document/`.
-- If a note was discovered during repository work but its substance is about agent process, workflow mistakes, or reusable operating guidance rather than that repository's code/state, treat it as global and store it in `/home/nakamura/.codex/document/`.
-- If a note remains actionable after removing repository path, branch, commit, and current code details, treat it as global.
-- If one thread produces both repository-specific findings and global process findings, split them into separate notes and store each in the appropriate location instead of forcing one location for both.
-- Split mixed findings only when both parts have standalone reuse value; otherwise keep the dominant note and add a one-line pointer to the other location.
-- Notes stored under `/home/nakamura/.codex/document/` should be written in Japanese unless there is a clear reason to use another language.
-- Record substantive research results, explicit documentation requests, and reusable or non-obvious findings unless the user explicitly asks not to.
-- Default to saving a short Markdown note when a task involves non-trivial investigation, comparison, decision-making, workflow design, or reusable troubleshooting.
-- Do not treat conciseness as a reason to skip documentation. When a result is worth keeping, save it as a short note rather than omitting it.
-- Prefer updating an existing related Markdown note when the current task continues, refines, or corrects an existing documented thread.
-- Lightweight or one-off questions that are unlikely to matter later do not need a new saved note, but they may still justify updating an existing related note when that keeps the document current.
-- Do not include dates in document filenames by default. Prefer stable descriptive names and keep dates in metadata unless a date materially helps distinguish versions or chronology.
+- 保存クラスを場所より先に決める。まず `document/` と `knowledge/` のどちらかを決め、その後でリポジトリ内かグローバルかを決める。
+- 現在のコード状態、現在のブランチ状態、または特定コミットに依存する記録や文書には `document/` を使う。
+- コードが変わっても有用であるべき記録には `knowledge/` を使う。例: 再利用できる知見、安定した参照情報、一般的な教訓。
+- あるワークスペースまたはリポジトリに固有の記録は、そのワークスペースのローカル `document/` ディレクトリに保存する。
+- 特定のワークスペースまたはリポジトリに結び付かない記録は、`/home/nakamura/.codex/document/` に保存する。
+- リポジトリ作業中に得た記録でも、内容がそのリポジトリのコードや状態ではなく、エージェントの作業手順、ワークフロー上の失敗、再利用できる運用指針に関するものなら、グローバル扱いとして `/home/nakamura/.codex/document/` に保存する。
+- リポジトリパス、ブランチ、コミット、現在のコード詳細を取り除いても記録が有用なら、グローバル扱いにする。
+- 1 つのスレッドでリポジトリ固有の知見とグローバルなプロセス知見の両方が出た場合は、1 つの場所へ無理にまとめず、別々の記録に分けて適切な場所へ保存する。
+- 混在した知見の分割は、両方が単独で再利用価値を持つ場合だけ行う。それ以外は主な記録を維持し、もう一方の場所への一行の参照を加える。
+- `/home/nakamura/.codex/document/` に保存する記録は、明確な理由がない限り日本語で書く。
+- 実質的な調査結果、明示的な文書化依頼、再利用できる知見、または自明でない知見は、ユーザーが明示的に記録しないよう求めた場合を除き記録する。
+- 非自明な調査、比較、意思決定、ワークフロー設計、再利用できるトラブルシューティングを含むタスクでは、既定で短い Markdown 記録を保存する。
+- 簡潔であることを記録省略の理由にしない。保存する価値がある結果は、省略せず短い記録として保存する。
+- 現在のタスクが既存の文書化済みスレッドを継続、精緻化、訂正する場合は、関連する既存 Markdown 記録の更新を優先する。
+- 後で重要になりにくい軽量または一回限りの質問には、新しい保存記録は不要。ただし、関連する既存記録を更新した方が文書を最新に保てる場合は更新してよい。
+- 文書ファイル名には既定で日付を入れない。安定した説明的な名前を優先し、日付は版や時系列を区別する実質的な助けになる場合を除きメタデータに置く。
 
-## Markdown Metadata
+## Markdown メタデータ
 
-When creating or updating Markdown notes, use the standard structure below near the top of the file unless the user explicitly requests a different format.
+Markdown 記録を作成または更新するときは、ユーザーが明示的に別形式を求めた場合を除き、ファイル冒頭付近に次の標準構造を使う。
 
-Use this exact metadata block order:
-- `Created:` creation timestamp
-- `Updated:` last updated timestamp
-- `Model:` model used to produce or revise the note
-- `Reasoning-Effort:` Codex reasoning effort level such as `low`, `medium`, `high`, or `xhigh`
-- `Session:` session ID when available
-- `Repository:` repository name or path when relevant
-- `Related-Commit:` commit hash when the note depends on a specific code state
+メタデータブロックはこの順序にする:
+- `Created:` 作成タイムスタンプ
+- `Updated:` 最終更新タイムスタンプ
+- `Model:` 記録の作成または改訂に使ったモデル
+- `Reasoning-Effort:` `low`、`medium`、`high`、`xhigh` などの Codex 推論レベル
+- `Session:` 利用できる場合のセッション ID
+- `Repository:` 関連する場合のリポジトリ名またはパス
+- `Related-Commit:` 記録が特定コード状態に依存する場合のコミット hash
 
-After the metadata block, include:
-- a required one-line `Purpose:` line
-- a required `## Background` section
-- a required `## Content` section
-- a required `## References` section at the end
+メタデータブロックの後に含めるもの:
+- 必須の一行 `Purpose:` 行
+- 必須の `## Background` セクション
+- 必須の `## Content` セクション
+- 最後に置く必須の `## References` セクション
 
-`Purpose:` must state why the document is worth keeping or writing in one sentence.
-`Purpose:` is not a restatement of the topic or a duplicate of `Background`. Use it for the retention reason, such as what future decision, review, handoff, or reproduction this note should support.
+`Purpose:` は、その文書を保存または作成する価値を一文で述べる。
+`Purpose:` はトピックの言い換えでも `Background` の重複でもない。将来のどの判断、レビュー、引き継ぎ、再現を支えるための記録かなど、保持理由を書く。
 
-`## Background` must appear with that exact heading name and should briefly explain the situation, trigger, or factual setup behind the note so later readers can interpret the saved result correctly.
+`## Background` はこの正確な見出し名で置き、記録の状況、きっかけ、事実関係を短く説明する。後の読者が保存結果を正しく解釈できるようにするためである。
 
-Keep `## Background` concise. Preserve the core facts, decisions, constraints, rationale, and reproduction details.
+`## Background` は簡潔に保つ。中核となる事実、判断、制約、根拠、再現情報を残す。
 
-`## Content` must appear after `## Background` with that exact heading name and should contain the document's main substance, such as findings, procedures, decisions, comparisons, or other task-specific material.
+`## Content` は `## Background` の後にこの正確な見出し名で置く。調査結果、手順、判断、比較、その他タスク固有の内容など、文書の主内容を書く。
 
-`## References` must appear at the end of the document with that exact heading name.
-For now, list only external references there, such as web pages, papers, standards, or other outside documents.
-Do not list internal repository documents, local notes, or other workspace-internal files in `## References` unless the user later asks to change this rule.
+`## References` は文書末尾にこの正確な見出し名で置く。
+現時点では、ウェブページ、論文、標準、その他の外部文書など、外部参照だけを列挙する。
+ユーザーが後で変更を求めない限り、内部リポジトリ文書、ローカル記録、その他ワークスペース内部ファイルは `## References` に列挙しない。
 
-Keep the document concise as a whole. Omit secondary details that can be inferred from the core points unless they are needed for verification, reproduction, or future decisions. Do not repeat the whole task log, do not restate conclusions that are obvious from the main proposal or decision, and do not include nearby but separate artifacts such as implementation patches, recommended wording, or review notes unless the document's purpose specifically requires them.
+文書全体は簡潔に保つ。検証、再現、将来の判断に必要でない限り、中核点から推測できる副次的詳細は省く。タスクログ全体を繰り返さず、主要な提案や判断から明らかな結論を言い直さず、文書の目的が明確に必要とする場合を除き、実装差分、推奨文言、レビュー記録など近接する別成果物を含めない。
 
-When available, prefer actual runtime values over placeholders:
-- read `Model:` and `Reasoning-Effort:` from the current thread's `turn_context` entry in the session log under `/home/nakamura/.codex/sessions/`
-- use `CODEX_THREAD_ID` for `Session:`
-- if a value cannot be retrieved, say so explicitly instead of inventing a placeholder
+利用できる場合はプレースホルダーより実際の実行時値を優先する:
+- `Model:` と `Reasoning-Effort:` は、`/home/nakamura/.codex/sessions/` 配下の session log にある現在スレッドの最新 `turn_context` entry から読む
+- `Session:` には `CODEX_THREAD_ID` を使う
+- 値を取得できない場合は、プレースホルダーを作らず、その旨を明示する
 
-Preferred helper:
-- use `scripts/extract_session_metadata.sh` to print `Model`, `Reasoning-Effort`, and `Session` for the current thread without relying on `config.toml`
+推奨補助:
+- `scripts/extract_session_metadata.sh` を使うと、`config.toml` に依存せず、`Created:` / `Updated:` の後に挿入する現在スレッドの `Model:`、`Reasoning-Effort:`、`Session:` を出力できる
 
-Example:
+例:
 
 ```bash
 /home/nakamura/.codex/skills/document-workflow/scripts/extract_session_metadata.sh
 ```
 
-Standard template:
+標準テンプレート:
 
 ```md
-# Title
+# 題名
 
 - Created: 2026-04-19 08:00 UTC
 - Updated: 2026-04-19 08:00 UTC
 - Model: gpt-5.4
 - Reasoning-Effort: medium
-- Session: <session-id-if-available>
-- Repository: <repo-name-or-path>
-- Related-Commit: <commit-if-relevant>
+- Session: <利用できる場合の session-id>
+- Repository: <repo 名または path>
+- Related-Commit: <関連する場合のコミット>
 
-Purpose: <one-line statement of why this document should be kept or what future work it should support>
+Purpose: <この文書を保存すべき理由、または支援する将来作業を一文で書く>
 
 ## Background
 
-This note records <the key situation or decision>. It explains the immediate setup, trigger, or constraint behind the note so later readers can interpret the saved result correctly.
+この記録は <中核となる状況または判断> を残す。後の読者が保存結果を正しく解釈できるよう、直近の設定、きっかけ、制約を説明する。
 
 ## Content
 
-<write the main contents of the document here>
+<文書の主内容を書く>
 
 ## References
 
-- <external source 1>
-- <external source 2>
+- <外部参照 1>
+- <外部参照 2>
 ```
 
-## Repository Document Rotation
+## リポジトリ文書ローテーション
 
-Use the rotation workflow below as the default behavior for `document/` in Git repositories.
+`references/document_rotation.md` を、`document/` ローテーションの詳細仕様の正本とする。
 
-Target layout:
+- `document/` は既定でローテーション管理領域として扱う。
+- ローテーション管理しない文書は、`knowledge/` またはリポジトリの明示的な代替ワークフローへ分ける。
+- `document/previous/` と `document/<shortsha>-<slug>/` はローテーション済み snapshot として扱う。
+- ユーザーが明示的にアーカイブファイルの修正を求めた場合を除き、ローテーション済み snapshot ディレクトリ内のファイルは編集しない。
+- 明示的な対象パスなしで新しい artifact や作業文書を作る場合は、active な `document/` 直下の新しいパスに置く。
+- コミット時の移動、stage、clone 後の hook 有効化などの詳細は `references/document_rotation.md` に従う。
 
-```text
-document/
-  previous/
-  <shortsha>-<slug>/
-```
+## 実装パターン
 
-Meaning:
-- `document/` root contains current working documents before rotation
-- `document/previous/` contains the generation that will be associated with the next commit
-- `document/<shortsha>-<slug>/` contains a finalized snapshot associated with a past commit
-- `knowledge/` is outside the rotation workflow and is meant for code-independent notes
-
-Editing policy:
-- Treat `document/previous/` and `document/<shortsha>-<slug>/` as rotated snapshots.
-- Do not edit files inside rotated snapshot directories unless the user explicitly asks to modify those archived files.
-- When creating new artifacts or working documents without an explicit target path, place them in a fresh path under the active `document/` root rather than reusing a rotated snapshot directory.
-
-Scope:
-- `document/` is the rotation-managed area by default
-- if some documents should not be rotation-managed, keep them in `knowledge/` or use a deliberate alternative workflow
-- if a repository mixes stable docs and temporary working docs, introduce a separate folder layout rather than weakening the default rotation rule
-
-Commit-time behavior:
-1. If `document/previous/` exists and `HEAD` exists, move it to `document/<HEAD shortsha>-<HEAD slug>/`.
-2. Move working files from `document/` root into `document/previous/`.
-3. Stage `document/` changes before the commit continues.
-
-Prefer `pre-commit` or a commit wrapper for this workflow. Do not prefer `post-commit` deletion for tracked files, because it leaves the repository dirty after commit.
-
-## Implementation Pattern
-
-For repository setup, prefer this split:
+リポジトリ設定では、この分割を優先する:
 
 - `.document-rotation.env`
-  - repository-local config file that defines the rotation target directory
+  - ローテーション対象ディレクトリを定義する、リポジトリローカル設定ファイル
 - `.githooks/pre-commit`
-  - thin wrapper that reads the config, calls the rotation script, and stages the configured directory
+  - 設定を読み、ローテーションスクリプトを呼び、設定ディレクトリをステージする薄いラッパー
 - `tool/rotate_document_before_commit.sh`
-  - main document rotation logic
+  - 主な文書ローテーションロジック
 - `tool/setup_git_hooks.sh`
-  - one-time setup that sets `core.hooksPath` to `.githooks` and fixes execute bits
+  - `core.hooksPath` を `.githooks` に設定し、実行ビットを直す一回限りのセットアップ
 - `assets/repo_document_rotation/`
-  - template files copied into the target repository during setup
+  - セットアップ時に対象リポジトリへコピーするテンプレートファイル
 - `scripts/install_document_rotation.sh`
-  - helper script that copies the template files into a repository
+  - テンプレートファイルをリポジトリにコピーする補助スクリプト
 
-Installation method:
-- Default to copying the prepared template files from `assets/repo_document_rotation/`.
-- Prefer `scripts/install_document_rotation.sh` when it fits the repository as-is.
-- If you need a manual install path, still use explicit `cp` commands from `assets/repo_document_rotation/`; do not retype the script files from scratch.
-- Configure the rotation target by editing the copied `.document-rotation.env` file instead of hard-coding a repository-specific path into the scripts.
-- Only patch the copied files after the copy step, and only when the repository needs a deliberate variation.
+導入方法:
+- 既定では、準備済みテンプレートファイルを `assets/repo_document_rotation/` からコピーする。
+- リポジトリにそのまま合う場合は、`scripts/install_document_rotation.sh` を優先する。
+- 推奨実行形は `/home/nakamura/.codex/skills/document-workflow/scripts/install_document_rotation.sh <target_repo>` とする。
+- `scripts/install_document_rotation.sh` は非 `--force` 実行では既存コピー先を事前検出し、衝突があれば何もコピーせず終了する。
+- `--force` はテンプレート導入対象ファイルを上書きするため、既存の `pre-commit` ワークフローを置き換える意図がある場合だけ使う。
+- コピー先が directory の場合は、`--force` でも置換せず停止する。
+- 手動導入パスが必要な場合でも、`cp -R /home/nakamura/.codex/skills/document-workflow/assets/repo_document_rotation/. <target_repo>/` で hidden file を含めてコピーする。スクリプトファイルを最初から打ち直さない。
+- 手動導入後は `chmod +x <target_repo>/.githooks/pre-commit <target_repo>/tool/rotate_document_before_commit.sh <target_repo>/tool/setup_git_hooks.sh` を実行する。
+- リポジトリ固有パスをスクリプトにハードコードせず、コピー後の `.document-rotation.env` を編集してローテーション対象を設定する。
+- コピー済みファイルへの修正はコピーステップの後だけ行い、リポジトリが明示的な変更を必要とする場合に限る。
 
-Why:
-- the behavior works for normal Git commits, not just Codex-driven edits
-- the implementation lives in the repository and can be cloned
-- the setup step is explicit and lightweight
-- the template files stay versioned in one place and can be reused across repositories
-- the rotation model gives `document/` a single clear meaning across repositories
+## Clone 時の挙動
 
-## Clone Behavior
+clone 時の hook 有効化の仕様は `references/document_rotation.md` に従う。clone 時の挙動について聞かれたら、リポジトリファイルは clone されるが Git hook の有効化は clone されない、と明示する。
 
-- Files under `.githooks/` and `tool/` are cloned normally.
-- The hook path setting is not cloned automatically.
-- After cloning, the user must run `./tool/setup_git_hooks.sh` once in that clone.
-- Installing templates and activating hooks are separate steps.
+## 実装時
 
-When asked about clone behavior, be explicit that repository files clone, but Git hook activation does not.
-
-## When Implementing
-
-Before editing a repository to add document rotation:
-1. Check whether the repository already has `.githooks/`, `tool/`, or an existing commit workflow.
-2. Prefer copying the templates from `assets/repo_document_rotation/` by using `scripts/install_document_rotation.sh`.
-3. If you do not use the installer script, copy the needed files with `cp` from `assets/repo_document_rotation/`; do not manually recreate `.document-rotation.env`, `.githooks/pre-commit`, `tool/rotate_document_before_commit.sh`, or `tool/setup_git_hooks.sh`.
-4. Configure the target path by editing the copied `.document-rotation.env`; keep `ROTATE_DOCUMENT_DIR=document` as the default unless the repository deliberately needs a different directory.
-5. Treat `document/` as rotation-managed by default; if the repository wants a different meaning for those files, use a separate folder or a deliberate alternative workflow.
-6. Use `knowledge/` for code-independent notes that should not rotate with commits.
-7. If the repository already has a pre-commit workflow, integrate manually rather than overwriting it blindly.
-8. Keep the hook thin and the main logic in `tool/`.
-9. Add a short note in repo documentation explaining that clones must run `./tool/setup_git_hooks.sh`.
-10. Only after copying templates should you patch them for repository-specific variations.
-11. In a Git repository, if the standard document-workflow setup is missing, install it by default rather than waiting for the user to name the missing files explicitly.
+文書ローテーションを追加するためにリポジトリを編集する前に:
+1. リポジトリに `.githooks/`、`tool/`、既存コミットワークフローがあるか確認する。
+2. `references/document_rotation.md` で詳細仕様を確認する。
+3. 標準 document-workflow 設定が欠けている場合は、ユーザーが不足ファイルを明示的に挙げるのを待たず、既定で導入方針を作る。
+4. 導入方針と対象ファイルを提示し、ユーザーの承認または明示的な続行指示後にコピーまたは編集する。
+5. `scripts/install_document_rotation.sh` を使い、`assets/repo_document_rotation/` からテンプレートをコピーすることを優先する。
+6. リポジトリに既存の `pre-commit` ワークフローがある場合は、盲目的に上書きせず手動で統合する。
+7. installer script を使わない場合は、`assets/repo_document_rotation/` から必要ファイルを `cp` でコピーする。`.document-rotation.env`、`.githooks/pre-commit`、`tool/rotate_document_before_commit.sh`、`tool/setup_git_hooks.sh` を手作業で再作成しない。
+8. コピー後の `.document-rotation.env` を編集して対象パスを設定する。リポジトリが明示的に別ディレクトリを必要としない限り、`ROTATE_DOCUMENT_DIR=document` を既定として保つ。
+9. リポジトリ固有の変更のために patch する場合も、テンプレートコピー後に限る。
+10. clone 後に `./tool/setup_git_hooks.sh` を実行する必要があることを、リポジトリ documentation に短く書く。

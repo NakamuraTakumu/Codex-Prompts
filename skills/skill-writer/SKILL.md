@@ -1,6 +1,6 @@
 ---
 name: skill-writer
-description: skill の新規作成、既存 skill への内容追加、既存 skill のレビューを、冗長性の排除、Markdown による構造化、命名の厳密化、情報保持の観点で支援する。
+description: skill の新規作成、既存 skill への内容追加、既存 skill のレビューを行う。冗長性の排除、構造化文書としての整理、命名の厳密化、情報保持の観点で支援する。
 ---
 
 # Skill Writer
@@ -20,14 +20,16 @@ description: skill の新規作成、既存 skill への内容追加、既存 sk
 ## 中核原則
 
 - **冗長性の排除**: 推測可能な説明や重複指示を避ける。
-- **構造化**: 責務、判断、出力契約を Markdown 構造で分ける。
+- **構造化**: 責務、判断、出力契約を文書構造で分ける。
 - **厳密化**: 名称、表記、スコープの曖昧さを減らす。
 - **情報保持**: 削除、統合、抽象化によって入力情報、判断条件、出力契約を失わない。
 
 ## 参照
 
 - **`skill-creator`**: 新規作成時の scaffold、template、validation、skill folder の基本構成を確認する場合に参照する。
-- **`references/writing_rules.md`**: 冗長性、構造、用語・表記・挙動の厳密化、情報保持の詳細判断に使う。特に大きな編集、構造変更、抽象化、レビューでは読む。
+- **常時参照**: skill-writer を使うときは、先に `skills/common/structured_document_rule.md` と `skills/common/instruction_rule.md` を読む。
+  - **`skills/common/structured_document_rule.md`**: 冗長性、構造、用語・表記、情報保持の詳細判断に使う。
+  - **`skills/common/instruction_rule.md`**: 指示文書の入力契約、副作用契約、選択規則、失敗時の挙動、完了条件を厳密化する場合に使う。
 
 ## ワークフロー
 
@@ -41,7 +43,7 @@ description: skill の新規作成、既存 skill への内容追加、既存 sk
 
 ### 内容追加
 
-1. 対象 skill と追加内容を受け取る。
+1. 対象 skill と追加内容を受け取る。内容が不足している場合は、**要件確認** を行う。
 2. **中核原則** と **参照** に照らして、追加先の **section**、**record**、または手順を決める。
 3. 既存 skill ファイルを編集する場合は、編集方針と副作用を提示し、ユーザーの承認または明示的な続行指示後に反映する。
 4. 既存 skill の構造と表記に合わせて追加内容を反映する。
@@ -105,7 +107,7 @@ description: skill の新規作成、既存 skill への内容追加、既存 sk
 
 #### レビュー検査
 
-- 常時参照する短いチェックリストとして使う。詳細な確認問いと修正方針は `references/writing_rules.md` の **レビュー検査への適用** に従う。
+- 常時参照する短いチェックリストとして使う。詳細な確認問いと修正方針は `skills/common/structured_document_rule.md` と `skills/common/instruction_rule.md` の **レビュー検査への適用** に従う。
 - **冗長性検査**: 入力、手順、判断、出力、検証に影響しない重複や推論可能な記述を確認する。
 - **構造化検査**: 見出し、list、手順、補助資料の責務と読む順序を確認する。
 - **厳密化検査**: 名称、表記、参照、入力契約、副作用、選択規則、失敗時の挙動、完了条件を確認する。
