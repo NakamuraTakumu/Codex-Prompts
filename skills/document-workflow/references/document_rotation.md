@@ -44,6 +44,18 @@
 
 ローテーション対象ディレクトリは repository root からの相対パスに限る。空文字、絶対パス、`.` または `..` path 成分を含むパスは拒否する。
 
+## 導入前確認
+
+文書ローテーションを導入または更新する前に、対象リポジトリで次を確認する:
+
+- `.githooks/` の有無
+- `tool/` の有無
+- 既存の commit workflow
+- 明示的な代替文書 workflow
+- 標準 hook がローテーション対象ディレクトリ配下の index を commit 直前に再構成し、部分 stage を保持しない副作用を許容できるか
+
+ファイル作成、上書き、既存 workflow 統合が必要な場合は、導入方針と対象ファイルを示し、ユーザーの承認または明示的な続行指示を待つ。
+
 ## 最小ファイルセット
 
 ```text
@@ -76,52 +88,27 @@ chmod +x <target_repo>/.githooks/pre-commit <target_repo>/tool/rotate_document_b
 
 コピー後の `.document-rotation.env` ファイルが、対象ディレクトリを設定する場所である。`ROTATE_DOCUMENT_DIR=document` を既定として保ち、リポジトリが別 path を必要とする場合はこのコピー後ファイルを変更する。
 
-## 標準 hook 形
+## 導入手順
 
-```bash
-#!/usr/bin/env bash
+1. 対象リポジトリで **導入前確認** を行う。
+2. `/home/nakamura/.codex/skills/document-workflow/scripts/install_document_rotation.sh <target_repo>` を優先して使う。
+3. 非 `--force` 実行でコピー先衝突が出た場合は、何もコピーせず、統合方針を決める。
+4. `--force` は既存の `pre-commit` workflow を置き換える意図がある場合だけ使う。
+5. installer を使わない場合は、`assets/repo_document_rotation/` から hidden file を含めてコピーする。
+6. リポジトリ固有の変更が必要な場合は、template コピー後に `.document-rotation.env` またはコピー済みファイルを patch する。
+7. clone 後に `./tool/setup_git_hooks.sh` を実行する必要があることを、最終報告または repository documentation で案内する。
 
-set -euo pipefail
+## 標準 hook
 
-repo_root=$(git rev-parse --show-toplevel)
-cd "$repo_root"
+標準 hook の正本は `assets/repo_document_rotation/.githooks/pre-commit` とする。
 
-config_file="${ROTATE_DOCUMENT_CONFIG:-.document-rotation.env}"
-if [[ -f "$config_file" ]]; then
-  set -a
-  . "$config_file"
-  set +a
-fi
+hook は `.document-rotation.env` または `ROTATE_DOCUMENT_CONFIG` で指定された設定を読み、`ROTATE_DOCUMENT_DIR` を安全な repository root 相対パスとして検証し、`tool/rotate_document_before_commit.sh` を実行する。その後、ローテーション対象ディレクトリ配下の tracked changes と、`gitignore` 対象でない untracked files を stage する。
 
-rotate_dir="${ROTATE_DOCUMENT_DIR:-document}"
-rotate_dir="${rotate_dir%/}"
+## 最小 setup
 
-if [[ -z "$rotate_dir" ]]; then
-  echo "pre-commit: ROTATE_DOCUMENT_DIR は空にできません" >&2
-  exit 1
-fi
+clone ごとの hook 有効化の正本は `assets/repo_document_rotation/tool/setup_git_hooks.sh` とする。
 
-if [[ "$rotate_dir" == /* || "$rotate_dir" =~ (^|/)\.\.?($|/) ]]; then
-  echo "pre-commit: ROTATE_DOCUMENT_DIR は repository root からの安全な相対パスにしてください: $rotate_dir" >&2
-  exit 1
-fi
-
-./tool/rotate_document_before_commit.sh
-git add -u -- "$rotate_dir"
-git ls-files --others --exclude-standard -z -- "$rotate_dir" | xargs -0 -r git add --
-```
-
-## 最小 setup 形
-
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-
-git config core.hooksPath .githooks
-chmod +x .githooks/pre-commit
-chmod +x tool/rotate_document_before_commit.sh
-chmod +x tool/setup_git_hooks.sh
-```
+setup script は `core.hooksPath` を `.githooks` に設定し、標準 hook とローテーションスクリプトの実行ビットを直す。
 
 ## 重要な制約
 
@@ -134,4 +121,4 @@ chmod +x tool/setup_git_hooks.sh
 
 ## 記録メタデータ
 
-Markdown 記録のメタデータ field、順序、取得不能時の扱いは `SKILL.md` の **Markdown メタデータ** を正本とする。ローテーション仕様側ではメタデータ field set を重複定義しない。
+Markdown 記録のメタデータ field、順序、取得不能時の扱いは `SKILL.md` の **Markdown 記録を書く > 書式契約** を正本とする。ローテーション仕様側ではメタデータ field set を重複定義しない。
