@@ -1,4 +1,4 @@
 interface:
   display_name: "Skill Writer"
-  short_description: "Write concise, structured, precise Codex skills"
-  default_prompt: "Use $skill-writer to draft or revise a concise, structured, precise Codex skill."
+  short_description: "Draft, review, and revise concise, structured, precise Codex skills"
+  default_prompt: "Use $skill-writer to create, extend, review, or revise a concise, structured, precise Codex skill."
