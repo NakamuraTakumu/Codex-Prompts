@@ -1,13 +1,12 @@
 # 論文レビュー出力ノート
 
-`paper-review` が Markdown のレビュー note を作る場合に使う。
-このファイルは `## Content` 内部の schema と field 規則だけを定める。
+`paper-review` が必ず作成または更新する Markdown review note に使う。
+このファイルは `## Content` 内部の schema と field 規則だけを定め、保存先と外側の構造は扱わない。
 
 ## 適用範囲
 
 - **対象**: `## Content` 内部。
-- **保存先**: `document-workflow` に従う。
-- **外側の構造**: `document-workflow` に従う。
+- **非対象**: 保存先、外側の構造。
 - **`## References`**: 外部参照専用。
 
 ## `## Content` Schema
@@ -20,6 +19,8 @@
 <短いレビュー要約>
 
 ### Findings
+
+#### <criteria.md の評価面名>
 
 1. <短い所見タイトル>
    - Issue Location: <section / paragraph / sentence / file / page>
@@ -49,6 +50,10 @@
 ## Findings 規則
 
 - **schema**: `review-only`、`revision-no-change`、`revision` に同じ schema を使う。
+- **出力単位**: [criteria.md](criteria.md) の **評価面** ごとに出力する。
+- **省略規則**: ユーザー指示で考慮する **評価面** が制限される場合、対象外の評価面は出力しない。
+- **空項目**: 考慮した評価面に所見がない場合は `none` と書く。
+- **所見順序**: 各評価面内では `major`、`moderate`、`minor`、`nit` の順に並べ、同じ severity では source order に従う。
 - **`Severity`**: [criteria.md](criteria.md) の **重大度** 定義に従う。
 - **`Observed Meaning Shift`**: input diff、既存 revision、popup-review 対象 change による意味ずれを記録する。
 - **`Revision`**: `Content` と `Meaning Shift` を持つ入れ子 block として保つ。

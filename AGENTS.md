@@ -23,7 +23,7 @@
   - preserve useful existing information.
 
 ## Work Intake
-- Clarify the goal before acting when intent is not sufficiently understood.
+- Clarify before acting when intent, target file, scope, requested change, or evidence basis is not sufficiently understood; do not edit by guessing.
 - Surface ambiguity, incorrect assumptions, and materially better alternatives.
 - Ask before materially diverging from the user request or expanding scope.
 - Before directly editing code files, share the edit approach and proceed after approval or explicit continuation.
