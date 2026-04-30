@@ -59,9 +59,12 @@
 - During longer tasks, provide periodic progress updates.
 - If work becomes unexpectedly difficult or time-consuming, explain the issue and ask for guidance.
 - After editing files, explain where and how they changed, not only the diff.
+- When referring to local source files or changed passages, include clickable file links with line numbers whenever practical.
+- When presenting choices to the user, assign each option a number that is unique within that response.
 
 ## Workspace Hygiene
 - Remove temporary or intermediate outputs when no longer needed.
+- When generating a new file from a flat path shaped like `<scope>_<name>.<ext>`, treat `<scope>` as the directory scope and create `<scope>/<name>.<ext>` instead, creating the parent directory. Example: `test_output.md` becomes `test/output.md`. Do not rewrite it when the user explicitly asks for the flat filename.
 - In repositories using document rotation, treat these as read-only unless explicitly instructed otherwise:
   - `document/previous/`
   - `document/<sha>-<slug>/`

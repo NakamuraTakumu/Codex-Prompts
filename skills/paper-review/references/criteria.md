@@ -36,7 +36,8 @@
   - **見る問題**: 重要文献の欠落、名前の付け替えに留まる差分説明、引用または参考にした主張と参考文献の内容の不一致、引用が主張を支えていない箇所、引用文の不自然な組み込み。
 - **BibTeX と bibliography**:
   - **対象**: `.bib` file、citation key、entry type、author、title、year、venue、DOI、URL、bibliography output。
-  - **見る問題**: citation key の不一致、DOI または URL の欠落、必要 field の欠落、著者名・表題・年・出版先の誤り、重複 entry、不適切な entry type、本文 citation と bibliography output の不対応。
+  - **照合方法**: `.bib` file 内のすべての論文 entry を網羅的に Web 検索し、出版社、学会、journal、conference、DOI registry、arXiv などの一次性が高い source と照合する。
+  - **見る問題**: citation key の不一致、DOI または URL の欠落、必要 field の欠落、著者名・表題・年・出版先の誤り、Web 上の論文 metadata と bibliography 情報の不一致、重複 entry、不適切な entry type、本文 citation と bibliography output の不対応。
 - **表現と言語**:
   - **対象**: 文、参照表現、用語、略語、記号、文体、日本語または英語の学術表現。
   - **見る問題**: 指示語や修飾関係の曖昧さ、用語不統一、対象言語として目立つ不自然さ、根拠に合わない主張の強さ。

@@ -70,6 +70,13 @@ description: skill の新規作成、既存 skill への内容変更、既存 sk
   - 既存情報から合理的に決められる場合は、仮案を作ってユーザーに確認する。
   - 目的、使用場面、出力契約が不明な場合は、作成または更新前に質問する。
 
+### Skill 内の path 規則
+
+- **対象**: 作成または更新する skill が file 生成、保存先選択、出力 path 指定を扱う場合。
+- **規則**: 対象 skill の用途に沿って、生成先 path と scope の解釈をその skill の出力契約へ明記する。
+- **例**: 生成先 path が `<scope>_<name>.md` 形式なら、`<scope>` を保存 scope とみなし、`<scope>/<name>.md` に変換して親 directory を作成する、など。
+- **制約**: path 規則は対象 skill の domain に合わせる。skill-writer 自身の作業用 path 規則として一律適用しない。
+
 ### `SKILL.md` と bundled resources の役割分担
 
 - **`SKILL.md`**: 常時必要な目的、使用場面、手順、分岐条件、停止条件、出力契約。

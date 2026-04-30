@@ -68,6 +68,14 @@ description: Git リポジトリや Codex global 領域で、`document/` と `kn
 - 文書全体は簡潔に保つ。検証、再現、将来の判断に必要でない副次的詳細は省く。
 - タスクログ全体、主要な提案や判断から明らかな結論の言い直し、近接する別成果物の内容は、文書の目的が明確に必要とする場合を除き含めない。
 
+## パス設計
+
+- 保存先は、長い file 名へ分類情報を詰め込むより、安定した scope を directory として分けて構造化する。
+- Directory は topic、workflow、artifact 種別などの再利用される scope に使い、一回限りの細部だけで階層を増やさない。
+- File 名は leaf の役割を短く表す。親 directory から回復できる語を繰り返さず、`overview.md`、`decision.md`、`result.md`、`notes.md` などを使ってよい。
+- Flat な候補名が `<scope>_<name>.md` のように複数 scope を含む場合は、ユーザーが flat file 名を明示した場合を除き、`<scope>/<name>.md` として扱う。
+- Path または file 名が読み取りにくい長さになる場合は、slug を短くし、安定した分類だけを親 directory へ移す。
+
 ## Markdown 記録を書く
 
 Markdown 記録は構造化文書として扱い、書き方は `skills/common/structured_document_rule.md` を参照する。
