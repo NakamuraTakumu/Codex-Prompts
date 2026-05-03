@@ -54,44 +54,45 @@ description: Git リポジトリや Codex global 領域で、`document/` と `kn
 - **迷う場合**: 省略理由を具体的に言えない場合は記録する。
 - **次の手順**: 記録すると判断した場合は、**保存先選択** と **Markdown 記録を書く** に進む。
 
-## 分割規則
+## 配置スコープ設計
 
-- 1 つのスレッドでリポジトリ固有の知見とグローバルなプロセス知見の両方が出た場合は、1 つの場所へ無理にまとめず、別々の記録に分ける。
-- 混在した知見を分割するのは、両方が単独で再利用価値を持つ場合に限る。
-- 分割しない場合は主な記録を維持し、もう一方の場所への一行の参照を加える。
-- 内部文書、ローカル記録、ワークスペース内部ファイルへの cross-link は、**書式契約** の section 役割に従って置く。
+文書の分割と path 設計では、file と directory を `skills/common/structured_document_rule.md` の **配置スコープ** として扱う。Markdown 本文内の section に同 rule を適用するのと同じく、file、directory、cross-link でも責務、判断、契約、参照関係が混ざらないようにする。
+
+- **分割判断**: 1 つのスレッドでリポジトリ固有の知見とグローバルなプロセス知見の両方が出た場合は、1 つの場所へ無理にまとめず、別々の配置スコープに分ける。
+- **分割条件**: 混在した知見を分割するのは、両方が単独で再利用価値を持つ場合に限る。
+- **分割しない場合**: 主な配置スコープを維持し、もう一方の場所への一行の参照を加える。
+- **参照配置**: 内部文書、ローカル記録、ワークスペース内部ファイルへの cross-link は、`references/markdown_note_format.md` の section 役割に従って置く。
+- **Directory**: topic、workflow、artifact 種別など、再利用される親配置スコープに使う。一回限りの細部だけで階層を増やさない。
+- **File**: leaf 配置スコープとして、責務を短く表す名前にする。親 directory から回復できる語を繰り返さず、`overview.md`、`decision.md`、`result.md`、`notes.md` などを使ってよい。日付は、版や時系列を区別する実質的な助けになる場合を除き file 名に入れず、メタデータに置く。
+- **Flat path**: 候補名が `<scope>_<name>.md` のように複数 scope を含む場合は、ユーザーが flat file 名を明示した場合を除き、`<scope>/<name>.md` として扱う。
+- **可読性**: Path または file 名が読み取りにくい長さになる場合は、slug を短くし、安定した分類だけを親 directory へ移す。
 
 ## 文書形式
 
 - `/home/nakamura/.codex/document/` または `/home/nakamura/.codex/knowledge/` に保存する記録は、明確な理由がない限り日本語で書く。
-- 文書ファイル名には既定で日付を入れない。安定した説明的な名前を優先し、日付は版や時系列を区別する実質的な助けになる場合を除きメタデータに置く。
 - 文書全体は簡潔に保つ。検証、再現、将来の判断に必要でない副次的詳細は省く。
 - タスクログ全体、主要な提案や判断から明らかな結論の言い直し、近接する別成果物の内容は、文書の目的が明確に必要とする場合を除き含めない。
 
-## パス設計
-
-- 保存先は、長い file 名へ分類情報を詰め込むより、安定した scope を directory として分けて構造化する。
-- Directory は topic、workflow、artifact 種別などの再利用される scope に使い、一回限りの細部だけで階層を増やさない。
-- File 名は leaf の役割を短く表す。親 directory から回復できる語を繰り返さず、`overview.md`、`decision.md`、`result.md`、`notes.md` などを使ってよい。
-- Flat な候補名が `<scope>_<name>.md` のように複数 scope を含む場合は、ユーザーが flat file 名を明示した場合を除き、`<scope>/<name>.md` として扱う。
-- Path または file 名が読み取りにくい長さになる場合は、slug を短くし、安定した分類だけを親 directory へ移す。
-
 ## Markdown 記録を書く
 
-Markdown 記録は構造化文書として扱い、書き方は `skills/common/structured_document_rule.md` を参照する。
+Markdown 記録は構造化文書として扱う。標準書式は `references/markdown_note_format.md`、構造化文書の一般規則は `skills/common/structured_document_rule.md` を参照する。
+
+### 標準書式
+
+Markdown 記録を作成または更新する前に `references/markdown_note_format.md` を読む。`Responsibility:`、`## Background`、`## Result`、`## Notes`、`## References` の初期値は、同 file の役割分担に従って決める。
 
 ### 作成・更新の選択
 
-Markdown 記録を書くときは、保存先を決めた後、関連する既存記録の有無と `Purpose:` で新規作成か更新かを決める。
+Markdown 記録を書くときは、保存先を決めた後、関連する既存記録の有無と `Responsibility:` で新規作成か更新かを決める。
 
 - **新規作成**: 関連する既存記録がない場合。
-- **既存更新**: 変更内容が既存記録の `Purpose:` を保ったまま、精緻化、根拠追加、誤記訂正、失効した記述の局所修正になる場合。
-- **目的による分離**: 既存記録と対象、論点、またはスレッドが同じでも、`Purpose:` が示す保存価値、前提状態、または将来支える判断が変わる場合は新規作成する。例: 初回調査は原因特定、修正後の再調査は修正結果の検証を支えるため、原則として別記録にする。
-- **参照追加**: 分離した継続調査、再調査、検証記録を既存記録からたどる必要がある場合は、既存記録の `## Background` または `## Content` に一行の cross-link だけを加える。
+- **既存更新**: 変更内容が既存記録の `Responsibility:` を保ったまま、精緻化、根拠追加、誤記訂正、失効した記述の局所修正になる場合。
+- **責務による分離**: 既存記録と対象、論点、またはスレッドが同じでも、`Responsibility:` が示す文書全体の責務、出力契約、または主要成果物が変わる場合は新規作成する。例: 初回調査は原因候補の整理、修正後の再調査は修正結果の検証を成果物にするため、原則として別記録にする。
+- **参照追加**: 分離した継続調査、再調査、検証記録を既存記録からたどる必要がある場合は、既存記録の `## Notes` に一行の cross-link だけを加える。文書作成の経緯を示す参照だけは `## Background` に置く。
 
 ### 新規作成
 
-Markdown 記録を新規作成するときは、先に `skills/common/structured_document_rule.md` の **新規作成前確認** を行う。確認結果に基づき、`Purpose:`、対象読者、入力、出力契約、初期スコープ構造、未確定事項を決める。作成後に同 file の **スコープ構造検査** と **情報保持確認** に従ってリバイズする。
+Markdown 記録を新規作成するときは、先に `references/markdown_note_format.md` を読み、続けて `skills/common/structured_document_rule.md` の **新規作成前確認** を行う。確認結果に基づき、`Responsibility:`、対象読者、入力、出力契約、初期スコープ構造、未確定事項を決める。作成後に同 file の **スコープ構造検査** と **情報保持確認** に従ってリバイズする。
 
 ユーザーが明示的に別形式を求めた場合を除き、`scripts/generate_document_note.sh` で標準 skeleton を生成する。手作業で skeleton を書き起こさない。
 
@@ -105,9 +106,10 @@ Markdown 記録を新規作成するときは、先に `skills/common/structured
 `--output` を指定すると親 directory が作成される。既存 file は `--force` なしでは上書きされない。
 
 よく使う option:
-- `--purpose <text>`: `Purpose:` 行の初期値。
+- `--responsibility <text>`: `Responsibility:` 行の初期値。
 - `--background <text>`: `## Background` の初期値。
-- `--content <text>`: `## Content` の初期値。
+- `--result <text>`: `## Result` の初期値。
+- `--notes <text>`: `## Notes` の初期値。
 - `--references <text>`: `## References` の初期値。
 - `--repository <value|auto|none>`: `Repository:` の値。既定値は `auto`。
 - `--related-commit <value|auto|none>`: `Related-Commit:` の値。既定値は `none`。
@@ -117,10 +119,6 @@ Markdown 記録を新規作成するときは、先に `skills/common/structured
 - `--force`: 既存の `--output` file を上書きする。
 
 完全な CLI は `scripts/generate_document_note.sh --help` で確認する。
-
-script は `Created:`、`Updated:`、`Model:`、`Reasoning-Effort:`、`Session:`、`Repository:`、`Related-Commit:` を可能な範囲で埋める。値を取得できない場合は、placeholder ではなく取得不能理由を値として書く。
-
-`scripts/extract_session_metadata.sh` は `scripts/generate_document_note.sh` の内部補助として扱う。Markdown 記録の新規作成では、session metadata だけを手で差し込む目的で直接使わない。
 
 ### 更新
 
@@ -132,40 +130,12 @@ script は `Created:`、`Updated:`、`Model:`、`Reasoning-Effort:`、`Session:`
 - 新しい内容は、既存の主張を置き換える必要がある場合を除き、追記または局所編集で反映する。
 - 標準構造が欠けている既存記録では、変更の意図を壊さない範囲で標準構造へ寄せる。
 
-### 書式契約
+## 既存記録の扱い
 
-メタデータ bullets は `scripts/generate_document_note.sh` の出力順を正本とする:
-`Created`、`Updated`、`Model`、`Reasoning-Effort`、`Session`、`Repository`、`Related-Commit`。
+既存 Markdown 記録を参照または更新するときは、`references/markdown_note_format.md` の標準構造を前提に、次を確認する。
 
-メタデータブロックの後に含めるもの:
-- 必須の一行 `Purpose:` 行
-- 必須の `## Background` セクション
-- 必須の `## Content` セクション
-- 最後に置く必須の `## References` セクション
-
-`Purpose:` は、その文書を保存または作成する価値を一文で述べる。
-`Purpose:` はトピックの言い換えでも `Background` の重複でもない。将来のどの判断、レビュー、引き継ぎ、再現を支えるための記録かなど、保持理由を書く。
-
-各 section の役割:
-- `## Background`: 記録の状況、きっかけ、事実関係、制約、根拠、再現情報を短く書く。
-- `## Content`: 調査結果、手順、判断、比較、その他タスク固有の主内容を書く。
-- `## References`: ウェブページ、論文、標準、その他の外部文書だけを列挙する。
-
-内部リポジトリ文書、ローカル記録、その他ワークスペース内部ファイルへの cross-link は `## Background` または `## Content` に置き、`## References` には置かない。
-## Markdown 記録を読む
-
-既存 Markdown 記録を参照するときは、次の順序で読む:
-
-1. **保存価値**: `Purpose:` を見て、その記録が支える将来作業、判断、レビュー、引き継ぎ、再現を確認する。
-2. **依存性**: `Repository:` と `Related-Commit:` を見て、現在のリポジトリ、ブランチ、コード状態へそのまま適用できるか判断する。
-3. **作成文脈**: `Created:`、`Updated:`、`Model:`、`Reasoning-Effort:`、`Session:` を見て、記録時点、改訂時点、作成条件を確認する。
-4. **背景**: `## Background` で、記録のきっかけ、前提、制約、根拠を確認する。
-5. **主内容**: `## Content` で、調査結果、手順、判断、比較、タスク固有の内容を読む。
-6. **外部根拠**: `## References` で、外部参照だけを確認する。
-
-読むときの扱い:
 - `Repository:` または `Related-Commit:` が現在状態とずれる記録は、そのまま現在の事実として扱わず、更新または再検証の候補にする。
-- `## References` に内部文書がないことを、内部参照が存在しない根拠にしない。内部 cross-link は `## Background` または `## Content` を確認する。
+- `## References` に内部文書がないことを、内部参照が存在しない根拠にしない。内部 cross-link は `## Background` または `## Notes` を確認する。
 - 標準構造が欠けている既存記録は、内容を破棄せず、更新時に標準構造へ寄せる候補として扱う。
 - 現在のタスクが既存記録の継続、精緻化、訂正である場合は、新規作成より既存記録の更新を優先する。
 
@@ -202,6 +172,6 @@ script は `Created:`、`Updated:`、`Model:`、`Reasoning-Effort:`、`Session:`
 ## 完了条件
 
 - **保存先判断**: 保存クラス、保存範囲、保存パスを説明できる。
-- **Markdown 記録**: 標準構造、保存先、言語、ファイル名、`Purpose:` が確認できる。
+- **Markdown 記録**: 標準構造、保存先、言語、ファイル名、`Responsibility:` が確認できる。
 - **ローテーション導入**: 必要ファイル、`.document-rotation.env`、既存 workflow との関係、clone 後の hook 有効化案内が確認できる。
 - **未実行検証**: script 実行、copy、validation を行わなかった場合は理由を報告する。

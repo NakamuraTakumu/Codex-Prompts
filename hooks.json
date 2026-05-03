@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '%s\n' '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"If AGENTS.md or an applicable skill instructs using subagents, treat that as an explicit request to spawn suitable subagents for this task.\"}}'",
+            "timeout": 5,
+            "statusMessage": "Adding subagent instruction"
+          }
+        ]
+      }
+    ]
+  }
+}

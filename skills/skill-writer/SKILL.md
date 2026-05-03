@@ -1,14 +1,14 @@
 ---
 name: skill-writer
-description: skill の新規作成、既存 skill への内容変更、既存 skill のレビュー、既存 skill のリバイズを行う。冗長性の排除、構造化、厳密化、情報保持の観点で支援する。
+description: skill、prompt、workflow、hook などの指示文書の新規作成、内容変更、レビュー、リバイズを行う。冗長性の排除、構造化、厳密化、情報保持の観点で支援する。
 ---
 
 # Skill Writer
 
 ## 目的
 
-- **対象**: Codex skill の新規作成、内容変更、レビュー、リバイズ。
-- **成果物**: 目的、使用場面、入力、手順、出力、副作用条件、禁止事項、検証条件が明確な skill または findings。
+- **対象**: skill、prompt、workflow、hook など、Codex の動作を規定する指示文書の新規作成、内容変更、レビュー、リバイズ。
+- **成果物**: 目的、使用場面、入力、手順、出力、副作用条件、禁止事項、検証条件が明確な指示文書または findings。
 - **重視点**: 冗長性の排除、構造化、厳密化、情報保持。
 
 ## 中核原則
@@ -27,27 +27,28 @@ description: skill の新規作成、既存 skill への内容変更、既存 sk
   - `skills/common/structured_document_rule.md`: 冗長性、構造、用語・表記、情報保持の判断。
   - `skills/common/instruction_rule.md`: 入力契約、副作用契約、選択規則、失敗時の挙動、完了条件の判断。
 - **条件付き参照**:
-  - `skill-creator`: 新規作成、template 適用、validation、skill folder の基本構成を確認する場合。
-  - `agents/openai.yaml`: `SKILL.md` の目的、使用場面、trigger 文言、UI metadata に影響する説明を変えた場合。
+  - `skill-creator`: skill の新規作成、template 適用、validation、skill folder の基本構成を確認する場合。
+  - `agents/openai.yaml`: skill の目的、使用場面、trigger 文言、UI metadata に影響する説明を変えた場合。
 
 ## ワークフロー
 
 1. **入力確認**:
-   - **入力**: 対象 skill folder または file 群、作業種別、ユーザー指定の目的または変更内容。
+   - **入力**: 対象指示文書または関連 file 群、作業種別、ユーザー指定の目的または変更内容。
    - **不足時**: 目的、使用場面、出力契約が不明な場合は質問する。既存情報から合理的に決められる値は仮案として扱う。
 2. **参照確認**: **参照** の常時参照 file を読み、必要な条件付き参照だけ追加で読む。
 3. **対象範囲確認**:
-   - **対象**: `SKILL.md`、関連する bundled resources、`agents/openai.yaml`。
+   - **対象**: 対象指示文書と関連 file。skill の場合は `SKILL.md`、関連する bundled resources、`agents/openai.yaml` を含める。
    - **確認内容**: 目的、入力、手順、出力、副作用条件、禁止事項、検証条件、関連 file 間の契約一致。
 4. **作業種別の適用**:
-   - **新規作成**: **要件確認** で契約を固定し、承認または明示的な続行指示後に `skill-creator` の template を使って作成し、`skills/common/structured_document_rule.md` の **リバイズ対象範囲** を対象にして **レビュー・リバイズ手順** のリバイズありに従う。
+   - **新規作成**: **要件確認** で契約を固定し、承認または明示的な続行指示後に作成し、`skills/common/structured_document_rule.md` の **リバイズ対象範囲** を対象にして **レビュー・リバイズ手順** のリバイズありに従う。skill folder を作る場合だけ `skill-creator` の template を使う。
    - **内容変更**: `skills/common/structured_document_rule.md` の **内容変更前確認** で変更意図、変更先 **スコープ**、抵触の有無を確認し、既存構造と表記に合わせて反映した後、`skills/common/structured_document_rule.md` の **リバイズ対象範囲** を対象にして **レビュー・リバイズ手順** のリバイズありに従う。
-   - **既存 skill リバイズ**: **レビュー・リバイズ手順** に従い、対象文書を実際に修正する。
-   - **既存 skill レビュー**: **レビュー・リバイズ手順** に従い、対象文書を書き換えず findings を返す。
+   - **既存指示文書リバイズ**: **レビュー・リバイズ手順** に従い、対象文書を実際に修正する。
+   - **既存指示文書レビュー**: **レビュー・リバイズ手順** に従い、対象文書を書き換えず findings を返す。
 5. **検証**:
-   - 可能な限り `skills/.system/skill-creator/scripts/quick_validate.py <path/to/skill-folder>` を実行する。
-   - 既存 skill を編集した場合は `git diff` などで差分を確認する。
-   - validation を実行できない場合は理由を報告する。
+   - skill folder を作成または編集した場合は、可能な限り `skills/.system/skill-creator/scripts/quick_validate.py <path/to/skill-folder>` を実行する。
+   - その他の指示文書では、対応する validation、構文確認、または差分確認がある場合に実行する。
+   - 既存 file を編集した場合は `git diff` などで差分を確認する。
+   - validation や構文確認を実行できない場合は理由を報告する。
 6. **出力**: **出力契約** に従って、変更箇所、findings、validation 結果、未対応事項を返す。
 
 ## 汎用手順
@@ -55,44 +56,45 @@ description: skill の新規作成、既存 skill への内容変更、既存 sk
 ### 要件確認
 
 - **確認項目**:
-  - **目的**: skill が解決する問題。
-  - **使用場面**: skill を使うタイミング。
-  - **skill 名**: frontmatter `name` と呼び出し時の `$skill-name`。
-  - **trigger 文言**: frontmatter `description` に入れる使用条件。
-  - **作成先 path**: skill folder の保存先。
-  - **対象読者または実行者**: skill を読む、または実行する主体。
+  - **目的**: 対象指示文書が解決する問題。
+  - **使用場面**: 対象指示文書を使うタイミング。
+  - **文書識別子**: skill 名、prompt 名、workflow 名、hook 名、title など、対象を識別する名前。
+  - **trigger / metadata 文言**: skill frontmatter `description` など、適用判断または UI 表示に使う文言がある場合の使用条件。
+  - **保存先 path**: 対象指示文書または skill folder の保存先。
+  - **対象読者または実行者**: 対象指示文書を読む、または実行する主体。
   - **入力**: ユーザーから受け取る値、参照する file、前提。
   - **出力**: 返答形式、編集対象、保存先、検証条件。
   - **副作用条件**: ファイル編集、生成、削除、command 実行、sub-agent 起動などの実行条件。
-  - **bundled resources**: 必要な `scripts/`、`references/`、`assets/`。
-  - **禁止事項**: skill が行ってはいけないこと。
+  - **関連 resources**: 必要な `scripts/`、`references/`、`assets/`、metadata、config。
+  - **禁止事項**: 対象指示文書が行わせてはいけないこと。
 - **確認方法**:
   - 既存情報から合理的に決められる場合は、仮案を作ってユーザーに確認する。
   - 目的、使用場面、出力契約が不明な場合は、作成または更新前に質問する。
 
-### Skill 内の path 規則
+### 指示文書内の path 規則
 
-- **対象**: 作成または更新する skill が file 生成、保存先選択、出力 path 指定を扱う場合。
-- **規則**: 対象 skill の用途に沿って、生成先 path と scope の解釈をその skill の出力契約へ明記する。
+- **対象**: 作成または更新する指示文書が file 生成、保存先選択、出力 path 指定を扱う場合。
+- **規則**: 対象指示文書の用途に沿って、生成先 path と scope の解釈をその指示文書の出力契約へ明記する。
 - **例**: 生成先 path が `<scope>_<name>.md` 形式なら、`<scope>` を保存 scope とみなし、`<scope>/<name>.md` に変換して親 directory を作成する、など。
-- **制約**: path 規則は対象 skill の domain に合わせる。skill-writer 自身の作業用 path 規則として一律適用しない。
+- **制約**: path 規則は対象指示文書の domain に合わせる。skill-writer 自身の作業用 path 規則として一律適用しない。
 
-### `SKILL.md` と bundled resources の役割分担
+### 本文と関連 resources の役割分担
 
-- **`SKILL.md`**: 常時必要な目的、使用場面、手順、分岐条件、停止条件、出力契約。
-- **bundled resources**: 詳細規則、長い例、比較表、schema、必要なときだけ読む判断材料。
-- **`agents/openai.yaml`**: skill list や chip に表示する UI metadata。
-- **分離規則**: 同一粒度の同じ規則を重複させない。`SKILL.md` には要約、使用場面、満たすべき契約を置く。
+- **本文**: 常時必要な目的、使用場面、手順、分岐条件、停止条件、出力契約。
+- **関連 resources**: 詳細規則、長い例、比較表、schema、必要なときだけ読む判断材料。
+- **metadata / config**: UI 表示、登録情報、実行環境、hook 設定など、本文外で必要な設定。
+- **skill-specific file**: skill の場合、本文は `SKILL.md`、関連 resources は `references/`、`scripts/`、`assets/`、metadata は `agents/openai.yaml` に対応する。
+- **分離規則**: 同一粒度の同じ規則を重複させない。本文には要約、使用場面、満たすべき契約を置く。
 
 ### レビュー・リバイズ手順
 
-- **基準入力**: ユーザー、対象 skill、関連 file が明示または参照するレビュー基準、リバイズ基準、出力契約。
+- **基準入力**: ユーザー、対象指示文書、関連 file が明示または参照するレビュー基準、リバイズ基準、出力契約。
 - **確認規則**: **文書確認**、**指示確認**、**関連 file 確認**、**分類** は、**基準入力**、参照 rule、この skill の基準を併用して判断する。
 
 1. **基準確認**: **基準入力** を特定する。
 2. **文書確認**: `skills/common/structured_document_rule.md` の **スコープ構造検査** を行う。
 3. **指示確認**: `skills/common/instruction_rule.md` の **指示文書固有の確認** を行う。
-4. **関連 file 確認**: `SKILL.md` と bundled resources の契約を確認する。特に `references/`、`scripts/`、`agents/openai.yaml` の役割、script docstring、CLI、入出力契約が本文と一致するか見る。
+4. **関連 file 確認**: 対象指示文書と関連 file の契約を確認する。skill の場合は、特に `SKILL.md`、`references/`、`scripts/`、`agents/openai.yaml` の役割、script docstring、CLI、入出力契約が本文と一致するか見る。
 5. **処理分岐**:
    - **レビューのみ**: 対象文書を書き換えず、1 回の **文書確認** と **指示確認** から findings と最小修正案を返す。
    - **リバイズあり**: 対象文書を修正し、情報保持を確認する。修正した場合は **文書確認** に戻り、文書確認と指示確認の修正箇所がなくなるまで繰り返す。

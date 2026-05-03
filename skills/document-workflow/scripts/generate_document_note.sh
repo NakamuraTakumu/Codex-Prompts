@@ -11,9 +11,10 @@ set -euo pipefail
 #
 # 入力:
 #   --title <title>             任意。既定値は「題名」。
-#   --purpose <text>            任意。Purpose 行の初期値。
+#   --responsibility <text>     任意。Responsibility 行の初期値。
 #   --background <text>         任意。Background section の初期値。
-#   --content <text>            任意。Content section の初期値。
+#   --result <text>             任意。Result section の初期値。
+#   --notes <text>              任意。Notes section の初期値。
 #   --references <text>         任意。References section の初期値。
 #   --repository <value|auto|none>
 #                               任意。既定値は auto。
@@ -28,9 +29,10 @@ set -euo pipefail
 #   Markdown 記録 skeleton を stdout または --output file に書く。
 
 title="題名"
-purpose="この文書が支える将来作業、判断、レビュー、引き継ぎ、または再現を一文で書く。"
-background="この記録の状況、きっかけ、事実関係、制約を短く書く。"
-content="文書の主内容を書く。"
+responsibility="ユーザーが求めた結果に対して、この文書が何を整理、列挙、比較、説明、記録、または検証するかを一文で書く。"
+background="この文書を作ることになった経緯を短く書く。"
+result="Responsibility に直接対応する情報、一覧、まとめ、比較、説明、記録、または検証結果を書く。"
+notes="Responsibility に直接対応しない補助情報を書く。"
 references=""
 repository="auto"
 related_commit="none"
@@ -62,9 +64,9 @@ while [[ $# -gt 0 ]]; do
       title="$2"
       shift 2
       ;;
-    --purpose)
+    --responsibility)
       require_value "$1" "${2:-}"
-      purpose="$2"
+      responsibility="$2"
       shift 2
       ;;
     --background)
@@ -72,9 +74,14 @@ while [[ $# -gt 0 ]]; do
       background="$2"
       shift 2
       ;;
-    --content)
+    --result)
       require_value "$1" "${2:-}"
-      content="$2"
+      result="$2"
+      shift 2
+      ;;
+    --notes)
+      require_value "$1" "${2:-}"
+      notes="$2"
       shift 2
       ;;
     --references)
@@ -203,15 +210,19 @@ render() {
 - Repository: $repository_value
 - Related-Commit: $related_commit_value
 
-Purpose: $purpose
+Responsibility: $responsibility
 
 ## Background
 
 $background
 
-## Content
+## Result
 
-$content
+$result
+
+## Notes
+
+$notes
 
 ## References
 
